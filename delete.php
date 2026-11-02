@@ -1,18 +1,24 @@
 <?php
 try {
-    include 'includes/DatabaseConnection.php';
-    include 'includes/DatabaseFunction.php';
+    require_once __DIR__ . '/includes/bootstrap.php';
+    $database = Database::getConnection();
+    $id = $_POST['id'] ?? null;
+    $isConversation = isset($_POST['type']) && $_POST['type'] === 'conversation';
 
-    deleteReview($pdo, $_POST['id']);
-    header('location: review.php');
+    if (!is_scalar($id) || (string) $id === '') {
+        header('Location: ' . ($isConversation ? 'mailbox_reviewer.php' : 'review.php'));
+        exit();
+    }
 
-    if (isset($_POST['type']) && $_POST['type'] === 'conversation') {
-        deleteConversation($pdo, $_POST['id']);
+    if ($isConversation) {
+        Conversation::deleteConversation($database, $id);
         header('location: mailbox_reviewer.php');
     } else {
-        deleteReview($pdo, $_POST['id']);
+        Review::deleteReview($database, $id);
         header('location: review.php');
     }
+    exit;
+
 } catch (PDOException $e) {
     $title = 'An error has occurred';
     $output = 'Database error: ' . $e->getMessage();

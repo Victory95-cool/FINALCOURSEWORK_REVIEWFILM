@@ -1,7 +1,7 @@
 <?php
 session_start();
-include 'includes/DatabaseConnection.php';
-include 'includes/DatabaseFunction.php';
+require_once __DIR__ . '/includes/bootstrap.php';
+$database = Database::getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_reply'])) {
     $conv_id = $_POST['conversation_id'];
@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_reply'])) {
     $subject = "Re: " . $_POST['subject'];
     $body = $_POST['reply_message'];
 
-    replyToConversation($pdo, $conv_id, 'reviewer', $rev_id, $subject, $body);
+    Conversation::replyToConversation($database, $conv_id, 'reviewer', $rev_id, $subject, $body);
 
     header("Location: conversation.php?id=" . $conv_id);
     exit();
@@ -22,9 +22,9 @@ if (!$id) {
 }
 
 try {
-    $messages = getConversation($pdo, $id);
+    $messages = Conversation::getConversation($database, $id);
     $current_role = (strpos($_SERVER['PHP_SELF'], '/Admin/') !== false) ? 'admin' : 'reviewer';
-    markAsRead($pdo, $id, $current_role);
+    Conversation::markAsRead($database, $id, $current_role);
 
     if (!$messages) {
         throw new Exception("Conversation not found.");

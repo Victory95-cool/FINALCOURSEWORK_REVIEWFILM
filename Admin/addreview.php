@@ -1,7 +1,7 @@
 <?php
 require 'login/Check.php';
-include '../includes/DatabaseConnection.php';
-include '../includes/DatabaseFunction.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+$database = Database::getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $admin_name    = trim($_POST['admin_name'] ?? null);
         $film_id      = $_POST['film'] ?? null;
 
-        insertReview($pdo, $review_text, $rating, $reviewers_name, $film_id);
+        Review::insertReview($database, $review_text, $rating, $reviewers_name, $film_id);
 
         header('Location: admin_review.php');
         exit;
@@ -23,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
 
-    $films = allFilms($pdo);
-    $reviewers = allReviewers($pdo);
+    $films = Film::allFilms($database);
+    $reviewers = Reviewer::allReviewers($database);
 
     $title = 'Add review';
 

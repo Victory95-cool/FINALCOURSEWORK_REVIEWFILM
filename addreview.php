@@ -1,7 +1,7 @@
 <?php
 session_start();
-include 'includes/DatabaseConnection.php';
-include 'includes/DatabaseFunction.php';
+require_once __DIR__ . '/includes/bootstrap.php';
+$database = Database::getConnection();
 
 if (!isset($_SESSION['user_registered_name'])) {
     $_SESSION['user_registered_name'] = 'Dave Tran';
@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ? trim($_POST['existing_reviewers'])
             : trim($_POST['reviewers_name']);
 
-        insertReview($pdo, $review_text, $rating, $reviewers_name, $film_id);
+        Review::insertReview($database, $review_text, $rating, $reviewers_name, $film_id);
 
         header('Location: review.php');
         exit;
@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
 
-    $films = allFilms($pdo);
-    $reviewers = allReviewers($pdo);
+    $films = Film::allFilms($database);
+    $reviewers = Reviewer::allReviewers($database);
 
 
     $title = 'Add New Review';

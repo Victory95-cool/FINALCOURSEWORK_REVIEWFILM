@@ -1,15 +1,15 @@
 <?php
 require 'login/Check.php';
-include '../includes/DatabaseConnection.php';
-include '../includes/DatabaseFunction.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+$database = Database::getConnection();
 
 try {
     if (isset($_POST['review_text'])) {
-        updateReview($pdo, $_POST['id'], $_POST['review_text'], $_POST['rating'], $_POST['film']);
+        Review::updateReview($database, $_POST['id'], $_POST['review_text'], $_POST['rating'], $_POST['film']);
         header('location: admin_review.php');
     } else {
-        $review = getReview($pdo, $_GET['id']);
-        $films = allFilms($pdo);
+        $review = Review::getReview($database, $_GET['id']);
+        $films = Film::allFilms($database);
         $title = 'Edit comment';
         $current_film_id = $review['film_id'];
 

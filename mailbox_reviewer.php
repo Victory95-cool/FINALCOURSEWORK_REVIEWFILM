@@ -1,7 +1,7 @@
 <?php
 session_start();
-include 'includes/DatabaseConnection.php';
-include 'includes/DatabaseFunction.php';
+require_once __DIR__ . '/includes/bootstrap.php';
+$database = Database::getConnection();
 
 if (!isset($_SESSION['reviewer_id'])) {
     $_SESSION['user_registered_name'] = 'Dave Tran';
@@ -10,7 +10,7 @@ if (!isset($_SESSION['reviewer_id'])) {
 
 $reviewer_id = $_SESSION['reviewer_id'];
 
-$convs = getReviewerMailbox($pdo, $reviewer_id);
+$convs = Conversation::getReviewerMailbox($database, $reviewer_id);
 
 $title = "My Inbox";
 ob_start();

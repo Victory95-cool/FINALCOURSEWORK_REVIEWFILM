@@ -98,6 +98,7 @@
         <?php endforeach; ?>
     </tbody>
 </table>
+<?php include __DIR__ . '/pagination.html.php'; ?>
 
 <script>
     const modal = document.getElementById("filterModal");

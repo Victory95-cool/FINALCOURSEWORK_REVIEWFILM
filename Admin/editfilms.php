@@ -1,7 +1,7 @@
 <?php
 require 'login/Check.php';
-include '../includes/DatabaseConnection.php';
-include '../includes/DatabaseFunction.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+$database = Database::getConnection();
 
 if (isset($_POST['id'])) {
     $posterPath = $_POST['existing_poster'];
@@ -16,16 +16,16 @@ if (isset($_POST['id'])) {
         }
     }
 
-    updateFilm($pdo,  $_POST['id'], $_POST['title'], $_POST['genre_id'], $_POST['released_year'], $posterPath, $_POST['description'], $_POST['director_name'], $_POST['cast_names'] ?? []);
+    Film::updateFilm($database,  $_POST['id'], $_POST['title'], $_POST['genre_id'], $_POST['released_year'], $posterPath, $_POST['description'], $_POST['director_name'], $_POST['cast_names'] ?? []);
 
     header('Location: films.php');
     exit();
 }
 
-$film = getFilmDetails($pdo, $_GET['id']);
-$genres = allGenres($pdo);
-$directors = allDirectors($pdo);
-$stars = allStars($pdo);
+$film = Film::getFilmDetails($database, $_GET['id']);
+$genres = Film::allGenres($database);
+$directors = Film::allDirectors($database);
+$stars = Film::allStars($database);
 
 $currentStars = !empty($film['cast_names']) ? array_map('trim', explode(',', $film['cast_names'])) : [];
 

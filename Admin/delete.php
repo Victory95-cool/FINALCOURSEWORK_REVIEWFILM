@@ -1,8 +1,8 @@
 <?php
 require 'login/Check.php';
 try {
-    include '../includes/DatabaseConnection.php';
-    include '../includes/DatabaseFunction.php';
+    require_once __DIR__ . '/../includes/bootstrap.php';
+    $database = Database::getConnection();
 
     $id = $_POST['id'] ?? null;
     $type = $_POST['type'] ?? '';
@@ -10,19 +10,19 @@ try {
     if ($id) {
         switch ($type) {
             case 'review':
-                deleteReview($pdo, $id);
+                Review::deleteReview($database, $id);
                 $redirect = 'admin_review.php';
                 break;
             case 'film':
-                deleteFilm($pdo, $id);
+                Film::deleteFilm($database, $id);
                 $redirect = 'films.php';
                 break;
             case 'reviewers':
-                deleteReviewers($pdo, $id);
+                Reviewer::deleteReviewers($database, $id);
                 $redirect = 'reviewers.php';
                 break;
             case 'conversation':
-                deleteConversation($pdo, $id);
+                Conversation::deleteConversation($database, $id);
                 $redirect = 'mailbox_admin.php';
                 break;
             default:

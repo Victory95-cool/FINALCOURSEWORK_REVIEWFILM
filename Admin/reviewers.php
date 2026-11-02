@@ -1,17 +1,25 @@
 <?php
 require 'login/Check.php';
-include '../includes/DatabaseConnection.php';
-include '../includes/DatabaseFunction.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+$database = Database::getConnection();
 
 try {
 
     $search = $_GET['search'] ?? '';
     $sort = $_GET['sort'] ?? 'created_at DESC';
 
-    $reviewers = allReviewers($pdo, $search, $sort);
+    $totalItems = Reviewer::totalFilteredReviewers($database, $search);
+    $pagination = Pagination::forRequest($totalItems, $_GET['page'] ?? 1);
+    $reviewers = Reviewer::allReviewers(
+        $database,
+        $search,
+        $sort,
+        $pagination['itemsPerPage'],
+        $pagination['offset']
+    );
     $title = 'Reviewers List';
 
-    $totalReviewers = totalReviewers($pdo);
+    $totalReviewers = Reviewer::totalReviewers($database);
 
     ob_start();
     include '../templates/admin_reviewers.html.php';

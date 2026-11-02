@@ -1,7 +1,7 @@
 <?php
 require 'login/Check.php';
-include '../includes/DatabaseConnection.php';
-include '../includes/DatabaseFunction.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+$database = Database::getConnection();
 
 if (isset($_POST['title'])) {
     $posterPath = '';
@@ -14,15 +14,15 @@ if (isset($_POST['title'])) {
         }
     }
 
-    insertFilm($pdo, $_POST['title'], $_POST['genre_id'], $_POST['released_year'], $posterPath, $_POST['description'], $_POST['director_name'], $_POST['cast_names'] ?? []);
+    Film::insertFilm($database, $_POST['title'], $_POST['genre_id'], $_POST['released_year'], $posterPath, $_POST['description'], $_POST['director_name'], $_POST['cast_names'] ?? []);
 
     header('Location: films.php');
     exit();
 }
 
-$genres = allGenres($pdo);
-$directors = allDirectors($pdo);
-$stars = allStars($pdo);
+$genres = Film::allGenres($database);
+$directors = Film::allDirectors($database);
+$stars = Film::allStars($database);
 
 $title = 'Add New Film';
 ob_start();

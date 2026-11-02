@@ -1,8 +1,8 @@
 <?php
 session_start();
 try {
-    include 'includes/DatabaseConnection.php';
-    include 'includes/DatabaseFunction.php';
+    require_once __DIR__ . '/includes/bootstrap.php';
+    $database = Database::getConnection();
 
     if (!isset($_SESSION['user_registered_name'])) {
         $_SESSION['user_registered_name'] = 'Dave Tran';
@@ -14,8 +14,16 @@ try {
 
     $search = $_GET['search'] ?? '';
     $sort = $_GET['sort'] ?? 'r.review_date DESC';
-    $reviews = allReviewsFiltered($pdo, $search, $sort);
-    $totalReview = totalReview($pdo);
+    $totalReview = Review::totalReview($database);
+    $totalItems = Review::totalFilteredReviews($database, $search);
+    $pagination = Pagination::forRequest($totalItems, $_GET['page'] ?? 1);
+    $reviews = Review::allReviewsFiltered(
+        $database,
+        $search,
+        $sort,
+        $pagination['itemsPerPage'],
+        $pagination['offset']
+    );
 
     $title = 'Reviews List';
     ob_start();

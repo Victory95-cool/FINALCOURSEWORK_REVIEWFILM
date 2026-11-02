@@ -1,7 +1,7 @@
 <?php
 session_start();
-include 'includes/DatabaseConnection.php';
-include 'includes/DatabaseFunction.php';
+require_once __DIR__ . '/includes/bootstrap.php';
+$database = Database::getConnection();
 
 if (isset($_POST['username'])) {
     $email = trim($_POST['email']);
@@ -14,13 +14,13 @@ if (isset($_POST['username'])) {
               </script>";
         exit();
     }
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM reviewers WHERE email = ?");
+    $stmt = $database->prepare("SELECT COUNT(*) FROM reviewers WHERE email = ?");
     $stmt->execute([$email]);
 
     if ($stmt->fetchColumn() > 0) {
         echo "<script>alert('Error: Email already exists!'); window.history.back();</script>";
     } else {
-        insertReviewer($pdo, $username, $_POST['phone_number'], $email);
+        Reviewer::insertReviewer($database, $username, $_POST['phone_number'], $email);
 
         $_SESSION['user_registered_name'] = $username;
 

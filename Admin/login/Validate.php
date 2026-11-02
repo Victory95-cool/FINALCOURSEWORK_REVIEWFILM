@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-require __DIR__ . '/../../includes/DatabaseConnection.php';
-require __DIR__ . '/../../includes/DatabaseFunction.php';
+require_once __DIR__ . '/../../includes/bootstrap.php';
+$database = Database::getConnection();
 
 $username = $_POST['admin_user'] ?? '';
 $password = $_POST['admin_password'] ?? '';
@@ -12,7 +12,7 @@ if ($username === '' || $password === '') {
     exit();
 }
 
-$admin = getAdminByUsername($pdo, $username);
+$admin = Admin::getAdminByUsername($database, $username);
 
 if ($admin && password_verify($password, $admin['password'])) {
 

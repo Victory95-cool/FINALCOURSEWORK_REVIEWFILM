@@ -2,8 +2,8 @@
 session_start();
 
 try {
-    require 'includes/DatabaseConnection.php';
-    require 'includes/DatabaseFunction.php';
+    require_once __DIR__ . '/includes/bootstrap.php';
+    $database = Database::getConnection();
 
     if (!isset($_SESSION['user_name'])) {
         $_SESSION['user_name'] = 'Dave Tran';
@@ -23,7 +23,7 @@ try {
             throw new Exception("Message cannot be empty");
         }
 
-        createConversation($pdo, $subject, $reviewer_id, $body);
+        Conversation::createConversation($database, $subject, $reviewer_id, $body);
 
         @mail("adminwebsite123@gmail.com", $subject, "From: $name\n\n$body");
 

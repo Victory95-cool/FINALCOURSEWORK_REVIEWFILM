@@ -1,8 +1,12 @@
 <?php
-include 'includes/DatabaseConnection.php';
-include 'includes/DatabaseFunction.php';
+require_once __DIR__ . '/includes/bootstrap.php';
+$database = Database::getConnection();
 
-$films = allFilms($pdo);
+$films = Film::allFilms($database);
+foreach ($films as &$film) {
+	$film['stats'] = Film::getFilmStats($database, $film['id']);
+}
+unset($film);
 
 $title = '🎞️Review Website Home';
 ob_start();

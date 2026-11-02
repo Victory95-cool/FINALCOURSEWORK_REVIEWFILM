@@ -104,6 +104,7 @@
         <?php endforeach; ?>
 
     </table>
+    <?php include __DIR__ . '/pagination.html.php'; ?>
 <?php endif; ?>
 
 <script>

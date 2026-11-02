@@ -1,6 +1,6 @@
 <?php
-include 'includes/DatabaseConnection.php';
-include 'includes/DatabaseFunction.php';
+require_once __DIR__ . '/includes/bootstrap.php';
+$database = Database::getConnection();
 
 try {
     $filmId = $_GET['id'] ?? null;
@@ -9,9 +9,9 @@ try {
         exit();
     }
 
-    $film = getFilmDetails($pdo, $filmId);
-    $reviews = getReviewsByFilmId($pdo, $filmId);
-    $stats = getFilmStats($pdo, $filmId);
+    $film = Film::getFilmDetails($database, $filmId);
+    $reviews = Film::getReviewsByFilmId($database, $filmId);
+    $stats = Film::getFilmStats($database, $filmId);
 
     $title = $film['title'] . " - Movie Detail";
 

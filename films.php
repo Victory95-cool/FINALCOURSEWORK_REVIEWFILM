@@ -1,17 +1,27 @@
 <?php
-include 'includes/DatabaseConnection.php';
-include 'includes/DatabaseFunction.php';
+require_once __DIR__ . '/includes/bootstrap.php';
+$database = Database::getConnection();
 
 try {
     $search = $_GET['search'] ?? '';
     $genre_id = $_GET['genre_id'] ?? '';
     $year_range = $_GET['year_range'] ?? '';
-    $description = $_GET['description'] ?? '';
     $director = $_GET['director_name'] ?? '';
     $sort = $_GET['sort'] ?? 'f.id DESC';
 
-    $genres = allGenres($pdo);
-    $films = allFilms($pdo, $search, $genre_id, $year_range, $sort, $description, $director);
+    $genres = Film::allGenres($database);
+    $totalFilms = Film::totalFilms($database, $search, $genre_id, $year_range, $director);
+    $pagination = Pagination::forRequest($totalFilms, $_GET['page'] ?? 1);
+    $films = Film::allFilms(
+        $database,
+        $search,
+        $genre_id,
+        $year_range,
+        $sort,
+        $director,
+        $pagination['itemsPerPage'],
+        $pagination['offset']
+    );
 
     $title = 'Films List';
 

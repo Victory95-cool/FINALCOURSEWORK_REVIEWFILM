@@ -1,16 +1,23 @@
 <?php
 require 'login/Check.php';
+$title = 'Manage Reviews List';
 try {
-    include '../includes/DatabaseConnection.php';
-    include '../includes/DatabaseFunction.php';
+    require_once __DIR__ . '/../includes/bootstrap.php';
+    $database = Database::getConnection();
 
     $search = $_GET['search'] ?? '';
     $sort = $_GET['sort'] ?? 'r.review_date DESC';
 
-    $reviews = allReviewsFiltered($pdo, $search, $sort);
-    $totalReview = count($reviews);
-
-    $totalReview = totalReview($pdo);
+    $totalReview = Review::totalReview($database);
+    $totalItems = Review::totalFilteredReviews($database, $search);
+    $pagination = Pagination::forRequest($totalItems, $_GET['page'] ?? 1);
+    $reviews = Review::allReviewsFiltered(
+        $database,
+        $search,
+        $sort,
+        $pagination['itemsPerPage'],
+        $pagination['offset']
+    );
 
     ob_start();
     include '../templates/admin_review.html.php';

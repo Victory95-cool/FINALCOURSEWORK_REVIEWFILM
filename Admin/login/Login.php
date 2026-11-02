@@ -1,8 +1,8 @@
 <?php
 session_start();
 
-require __DIR__ . '/../../includes/DatabaseConnection.php';
-require __DIR__ . '/../../includes/DatabaseFunction.php';
+require_once __DIR__ . '/../../includes/bootstrap.php';
+$database = Database::getConnection();
 
 $error = '';
 
@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['admin_user'] ?? '');
     $password = trim($_POST['admin_password'] ?? '');
 
-    $admin = getAdminByUsername($pdo, $username);
+    $admin = Admin::getAdminByUsername($database, $username);
 
     if ($admin && password_verify($password, $admin['password'])) {
         $_SESSION['Authorised'] = "Y";

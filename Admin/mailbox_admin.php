@@ -1,7 +1,7 @@
 <?php
 require 'login/Check.php';
-include '../includes/DatabaseConnection.php';
-include '../includes/DatabaseFunction.php';
+require_once __DIR__ . '/../includes/bootstrap.php';
+$database = Database::getConnection();
 
 $sql = "SELECT c.id, c.subject, MAX(m.created_at) as created_at, 
         (SELECT r.username FROM reviewers r 
@@ -12,9 +12,9 @@ $sql = "SELECT c.id, c.subject, MAX(m.created_at) as created_at,
         JOIN mails_box m ON c.id = m.conversation_id 
         GROUP BY c.id 
         ORDER BY created_at DESC";
-$convs = query($pdo, $sql)->fetchAll();
+$convs = Database::query($database, $sql)->fetchAll();
 
-$allReviewers = allReviewers($pdo);
+$allReviewers = Reviewer::allReviewers($database);
 
 $title = "Admin Mailbox";
 ob_start();

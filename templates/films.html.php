@@ -3,7 +3,7 @@
 
 <div class="films-container">
     <section class="films-list-section">
-        <h2>Films List (Total: <?= count($films) ?> films)</h2>
+        <h2>Films List (Total: <?= $pagination['totalItems'] ?> films)</h2>
 
         <div style="margin-bottom: 20px;">
             <button id="openFilter" class="btn-filter-icon">
@@ -91,6 +91,7 @@
                 </tbody>
             </table>
         <?php endif; ?>
+        <?php include __DIR__ . '/pagination.html.php'; ?>
     </section>
 </div>
 

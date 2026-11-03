@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 16, 2026 at 11:44 AM
+-- Generation Time: Nov 03, 2026 at 07:11 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -29,17 +29,17 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admins` (
   `id` int(11) NOT NULL,
-  `username` varchar(50) NOT NULL,
+  `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `email` varchar(100) DEFAULT NULL
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admins`
 --
 
-INSERT INTO `admins` (`id`, `username`, `password`, `email`) VALUES
-(1, 'Victor', '$2y$10$L29sra8o03Uqd.GwrNH63O.kfCOqrfcjEb11V.IIvBAJDdXMOveOq', 'vinhthang0905@gmail.com');
+INSERT INTO `admins` (`id`, `username`, `password`, `created_at`) VALUES
+(1, 'Victor', '$2y$10$JTSZBeX4IXwdeU3k0yVcLubxIcMJaCrOWg/Y6sI4ZHmzj/T5H2nrG', '2026-10-21 03:41:29');
 
 -- --------------------------------------------------------
 
@@ -65,7 +65,11 @@ INSERT INTO `conversations` (`id`, `subject`, `created_at`) VALUES
 (27, 'NEW MOVIE 🐦‍🔥🐦‍🔥', '2026-04-14 10:05:00'),
 (28, 'Add Film', '2026-04-14 18:55:20'),
 (29, 'A Request for a Movie', '2026-04-15 19:39:22'),
-(30, 'NEW MOVIE 🐦‍🔥🐦‍🔥', '2026-04-15 19:54:41');
+(30, 'NEW MOVIE 🐦‍🔥🐦‍🔥', '2026-04-15 19:54:41'),
+(31, 'A Request for a Movie', '2026-04-24 03:48:03'),
+(32, 'NEW MOVIE 🐦‍🔥🐦‍🔥', '2026-04-24 03:51:09'),
+(33, 'NEW MOPVIE', '2026-05-15 06:26:06'),
+(34, 'Add new film', '2026-11-02 15:48:26');
 
 -- --------------------------------------------------------
 
@@ -86,6 +90,7 @@ INSERT INTO `directors` (`id`, `name`) VALUES
 (2, 'Anthony Russo, Joe Russo'),
 (4, 'Brett Ratner'),
 (3, 'Christopher Nolan'),
+(12, 'David Fincher'),
 (9, 'Gavin O\'Connor'),
 (11, 'George Tillman Jr.'),
 (1, 'James Cameron'),
@@ -129,7 +134,8 @@ INSERT INTO `film` (`id`, `title`, `released_year`, `created_at`, `genre_id`, `p
 (25, 'The Joker', '2019', '2026-04-11 19:04:23', 5, 'images/Joker.jpg', 'Arthur Fleck, a party clown and a failed stand-up comedian, leads an impoverished life with his ailing mother. However, when society shuns him and brands him as a freak, he decides to embrace the life of chaos in Gotham City.', 7),
 (26, 'The Amazing Spiderman', '2012', '2026-04-11 19:08:05', 2, 'images/The_Amazing_Spiderman.jpg', 'After Peter Parker is bitten by a genetically altered spider, he gains newfound, spider-like powers and ventures out to save the city from the machinations of a mysterious reptilian foe.', 8),
 (27, 'Warrior', '2011', '2026-04-14 14:20:30', 7, 'images/Warrior.jpg', 'The youngest son of an alcoholic former boxer returns home, where he\'s trained by his father for competition in a mixed martial arts tournament - a path that puts the fighter on a collision course with his estranged, older brother.', 9),
-(30, 'Big George Foreman', '2026', '2026-04-16 03:29:26', 7, 'images/Big_George_Foreman.jpg', 'Fueled by an impoverished childhood, George Foreman channeled his anger into becoming an Olympic Gold medalist and World Heavyweight Champion, followed by a near-death experience that took him from the boxing ring to the pulpit.', 11);
+(30, 'Big George Foreman', '2023', '2026-04-16 03:29:26', 7, 'images/Big_George_Foreman.jpg', 'Fueled by an impoverished childhood, George Foreman channeled his anger into becoming an Olympic Gold medalist and World Heavyweight Champion, followed by a near-death experience that took him from the boxing ring to the pulpit.', 11),
+(34, 'Avengers: Doomsday', '2026', '2026-11-02 23:39:53', 2, 'images/Doomsday.jpg', 'Heroes from three different worlds must unite when they\'re thrust together to confront a catastrophic danger that could destroy everything they know.', 2);
 
 -- --------------------------------------------------------
 
@@ -211,7 +217,11 @@ INSERT INTO `film_stars` (`film_id`, `star_id`) VALUES
 (30, 68),
 (30, 69),
 (30, 70),
-(30, 71);
+(30, 71),
+(34, 8),
+(34, 10),
+(34, 28),
+(34, 75);
 
 -- --------------------------------------------------------
 
@@ -268,10 +278,16 @@ INSERT INTO `mails_box` (`id`, `conversation_id`, `sender`, `reviewers_id`, `sub
 (41, 26, 'reviewer', 27, 'Add Film', 'Add Warrior', '2026-04-14 07:28:48', 1),
 (42, 26, 'admin', 27, 'Re: Add Film', 'Oke', '2026-04-14 07:29:13', 1),
 (43, 27, 'admin', 27, 'NEW MOVIE 🐦‍🔥🐦‍🔥', 'Warrior has been updated to the movie list. Make youself at home and enjoy it!!', '2026-04-14 10:05:00', 1),
-(44, 28, 'reviewer', 27, 'Add Film', 'I want to see a film called Thor: Ragnarok', '2026-04-14 18:55:20', 0),
+(44, 28, 'reviewer', 27, 'Add Film', 'I want to see a film called Thor: Ragnarok', '2026-04-14 18:55:20', 1),
 (45, 29, 'reviewer', 27, 'A Request for a Movie', 'I would love to see a new movie about passion and love', '2026-04-15 19:39:22', 1),
 (46, 29, 'admin', 27, 'Re: A Request for a Movie', 'Sure', '2026-04-15 19:46:55', 1),
-(47, 30, 'admin', 27, 'NEW MOVIE 🐦‍🔥🐦‍🔥', 'Big George Foreman is on the way! Hope you enjoy it', '2026-04-15 19:54:41', 1);
+(47, 30, 'admin', 27, 'NEW MOVIE 🐦‍🔥🐦‍🔥', 'Big George Foreman is on the way! Hope you enjoy it', '2026-04-15 19:54:41', 1),
+(48, 31, 'reviewer', 27, 'A Request for a Movie', 'Add Hulk', '2026-04-24 03:48:03', 1),
+(49, 31, 'admin', 27, 'Re: A Request for a Movie', 'Ok', '2026-04-24 03:48:41', 1),
+(50, 32, 'admin', 38, 'NEW MOVIE 🐦‍🔥🐦‍🔥', 'hulk is coming', '2026-04-24 03:51:09', 0),
+(51, 33, 'admin', 27, 'NEW MOPVIE', 'CHANI WOOJI ra phim', '2026-05-15 06:26:06', 1),
+(52, 34, 'reviewer', 27, 'Add new film', 'add a new film in 2026, pls!', '2026-11-02 15:48:26', 1),
+(53, 34, 'admin', 27, 'Re: Add new film', 'sure', '2026-11-02 15:48:47', 1);
 
 -- --------------------------------------------------------
 
@@ -311,7 +327,9 @@ INSERT INTO `review` (`id`, `review_text`, `rating`, `review_date`, `reviewers_i
 (31, 'This movie has always been on my movie night, go go Rocky🥊🥊🍿🍿', 5, '2026-04-12 22:06:26', 27, 14),
 (33, 'No Tony 🥹🥹', 5, '2026-04-13 22:22:31', 2, 13),
 (34, 'What a great movie for a stress relief', 4, '2026-04-13 22:24:29', 6, 6),
-(35, 'Nah, Jack would still be alive if Rose hadn\'t jumped back on the ship :))))', 3, '2026-04-14 23:44:27', 27, 5);
+(40, 'amazing', 4, '2026-04-24 10:50:29', 2, 30),
+(41, 'Bad', 1, '2026-10-28 11:00:39', 39, 27),
+(42, 'AMazing', 5, '2026-11-02 22:17:34', 27, 26);
 
 -- --------------------------------------------------------
 
@@ -342,7 +360,10 @@ INSERT INTO `reviewers` (`id`, `username`, `phone_number`, `email`, `created_at`
 (15, 'Jason Todd', '0834567812', 'jason@gmail.com', '2026-04-05 01:55:28'),
 (21, 'Bao Willy', '1234567890', 'willy@gmail.com', '2026-04-07 17:28:00'),
 (27, 'Dave Tran', '1234567890', 'dave@gmail.com', '2026-04-11 23:51:59'),
-(30, 'Sammy Dutch', '0998123531', 'sammy@gmail.com', '2026-04-15 16:23:52');
+(30, 'Sammy Dutch', '0998123531', 'sammy@gmail.com', '2026-04-15 16:23:52'),
+(36, 'Victor', '0965905941', 'vicky@gmail.com', '2026-04-16 21:53:03'),
+(38, 'Hoàng samson', '1111111111', 'samson@gmail.com', '2026-04-24 10:50:02'),
+(39, 'Tommy', '1234567890', 'tommy@gmail.com', '2026-10-28 10:56:24');
 
 -- --------------------------------------------------------
 
@@ -365,6 +386,7 @@ INSERT INTO `stars` (`id`, `name`) VALUES
 (15, 'Anne Hathaway'),
 (48, 'Benedict Cumberbatch'),
 (21, 'Billy Zane'),
+(72, 'Brad Pitt'),
 (57, 'Brett Cullen'),
 (42, 'Burt Young'),
 (43, 'Carl Weathers'),
@@ -374,6 +396,7 @@ INSERT INTO `stars` (`id`, `name`) VALUES
 (17, 'Christian Bale'),
 (33, 'Cillian Murphy'),
 (23, 'Dolph Lundgren'),
+(73, 'Edward Norton'),
 (13, 'Elliot Page'),
 (60, 'Emma Stone'),
 (45, 'Evangeline Lilly'),
@@ -410,11 +433,13 @@ INSERT INTO `stars` (`id`, `name`) VALUES
 (25, 'Martin Freeman'),
 (35, 'Matt Damon'),
 (14, 'Matthew McConaughey'),
+(74, 'Meat Loaf'),
 (34, 'Michael Caine'),
 (27, 'Michelle Rodriguez'),
 (38, 'Morgan Freeman'),
 (61, 'Nick Nolte'),
 (51, 'Orlando Bloom'),
+(75, 'Pedro Pascal'),
 (44, 'Richard Armitage'),
 (54, 'Robert De Niro'),
 (8, 'Robert Downey Jr.'),
@@ -441,8 +466,7 @@ INSERT INTO `stars` (`id`, `name`) VALUES
 --
 ALTER TABLE `admins`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `username_2` (`username`);
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- Indexes for table `conversations`
@@ -499,8 +523,9 @@ ALTER TABLE `review`
 --
 ALTER TABLE `reviewers`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `email` (`email`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `username_2` (`username`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- Indexes for table `stars`
@@ -523,19 +548,19 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `conversations`
 --
 ALTER TABLE `conversations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `directors`
 --
 ALTER TABLE `directors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `film`
 --
 ALTER TABLE `film`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `genre`
@@ -547,25 +572,25 @@ ALTER TABLE `genre`
 -- AUTO_INCREMENT for table `mails_box`
 --
 ALTER TABLE `mails_box`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `review`
 --
 ALTER TABLE `review`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `reviewers`
 --
 ALTER TABLE `reviewers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
 
 --
 -- AUTO_INCREMENT for table `stars`
 --
 ALTER TABLE `stars`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- Constraints for dumped tables

@@ -25,8 +25,8 @@
 
     <aside class="home-intro__showcase" aria-label="Recently added films">
         <div class="home-intro__showcase-header">
-            <h3>Recently added</h3>
-            <span><?= count($homeFeaturedFilms) ?> films</span>
+            <h3>Trending Films</h3>
+            <span>Up next</span>
             <?php if (count($homeFeaturedFilms) > 1): ?>
                 <div class="home-intro__controls" aria-label="Featured film controls">
                     <button type="button" data-gallery-direction="-1" aria-label="Previous film">&lsaquo;</button>
@@ -47,22 +47,19 @@
                         href="filmdetail.php?id=<?= (int) $featuredFilm['id'] ?>"
                         data-gallery-slide
                         data-gallery-index="<?= $index ?>"
-                        aria-label="View <?= htmlspecialchars($featuredFilm['title'], ENT_QUOTES, 'UTF-8') ?>"
-                    >
+                        aria-label="View <?= htmlspecialchars($featuredFilm['title'], ENT_QUOTES, 'UTF-8') ?>">
                         <?php if ($featuredPoster !== ''): ?>
                             <img
                                 class="home-intro__backdrop"
                                 src="<?= htmlspecialchars($featuredPoster, ENT_QUOTES, 'UTF-8') ?>"
                                 alt=""
                                 aria-hidden="true"
-                                loading="lazy"
-                            >
+                                loading="lazy">
                             <img
                                 class="home-intro__poster"
                                 src="<?= htmlspecialchars($featuredPoster, ENT_QUOTES, 'UTF-8') ?>"
                                 alt="<?= htmlspecialchars($featuredFilm['title'], ENT_QUOTES, 'UTF-8') ?>"
-                                loading="<?= $index === 0 ? 'eager' : 'lazy' ?>"
-                            >
+                                loading="<?= $index === 0 ? 'eager' : 'lazy' ?>">
                         <?php else: ?>
                             <span class="home-intro__poster-placeholder" aria-hidden="true">No poster available</span>
                         <?php endif; ?>
@@ -96,14 +93,12 @@
                             type="button"
                             data-gallery-thumbnail="<?= $index ?>"
                             aria-label="Show <?= htmlspecialchars($featuredFilm['title'], ENT_QUOTES, 'UTF-8') ?>"
-                            aria-pressed="<?= $index === 0 ? 'true' : 'false' ?>"
-                        >
+                            aria-pressed="<?= $index === 0 ? 'true' : 'false' ?>">
                             <?php if (!empty($featuredFilm['poster'])): ?>
                                 <img
                                     src="<?= htmlspecialchars($featuredFilm['poster'], ENT_QUOTES, 'UTF-8') ?>"
                                     alt=""
-                                    loading="lazy"
-                                >
+                                    loading="lazy">
                             <?php else: ?>
                                 <span aria-hidden="true">No poster</span>
                             <?php endif; ?>
@@ -111,11 +106,6 @@
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
-        <?php else: ?>
-            <div class="home-intro__empty">
-                <p>No films are available yet.</p>
-                <a href="films.php">Browse films</a>
-            </div>
         <?php endif; ?>
     </aside>
 </section>
@@ -296,7 +286,7 @@
         border-radius: 5px;
         background: #252525;
         color: #dedede;
-        font-size: 0.68rem;
+        font-size: 1.2rem;
         font-weight: 700;
         letter-spacing: 0.02em;
         line-height: 1.2;
@@ -313,8 +303,8 @@
         padding: 0;
         color: #fff;
         font-family: "Roboto", Arial, sans-serif;
-        font-size: clamp(2rem, 3.2vw, 3.2rem);
-        font-weight: 800;
+        font-size: clamp(2rem, 3.2vw, 3.5rem);
+        font-weight: 1000;
         letter-spacing: -0.035em;
         line-height: 1.06;
         text-shadow: none;
@@ -326,10 +316,10 @@
     }
 
     #home-intro .home-intro__description {
-        max-width: 590px;
+        max-width: 900px;
         margin: 0;
         color: #c9c9c9;
-        font-size: clamp(0.94rem, 1.2vw, 1.04rem);
+        font-size: clamp(0.94rem, 1.2vw, 1.2rem);
         font-weight: 400;
         line-height: 1.7;
         animation: none;
@@ -352,7 +342,7 @@
         padding: 10px 17px;
         border: 1px solid transparent;
         border-radius: 7px;
-        font-size: 0.86rem;
+        font-size: 1.2rem;
         font-weight: 700;
         line-height: 1.2;
         text-decoration: none;
@@ -386,7 +376,7 @@
     #home-intro .home-intro__note {
         margin: 18px 0 0;
         color: #a9a9a9;
-        font-size: 0.82rem;
+        font-size: 1.05rem;
         font-weight: 400;
         line-height: 1.55;
         animation: none;
@@ -423,18 +413,18 @@
         margin: 0;
         color: #fff;
         font-family: "Roboto", Arial, sans-serif;
-        font-size: 0.84rem;
+        font-size: 1.45rem;
         font-weight: 700;
         line-height: 1.3;
     }
 
-    #home-intro .home-intro__showcase-header > span {
+    #home-intro .home-intro__showcase-header>span {
         padding: 3px 7px;
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 4px;
         background: #242424;
         color: #bbb;
-        font-size: 0.62rem;
+        font-size: 0.89rem;
         line-height: 1.2;
     }
 
@@ -513,7 +503,7 @@
         object-fit: contain;
         object-position: center;
         filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.5));
-        transition: transform 5s ease;
+        transition: transform 2s ease;
     }
 
     #home-intro .home-intro__slide.is-active .home-intro__poster {
@@ -531,7 +521,7 @@
         place-items: center;
         background: linear-gradient(135deg, #292929, #111);
         color: #aaa;
-        font-size: 0.9rem;
+        font-size: 1.25rem;
     }
 
     #home-intro .home-intro__image-shade {
@@ -565,13 +555,13 @@
         border-radius: 4px;
         background: var(--home-hero-accent);
         color: #111;
-        font-size: 0.61rem;
+        font-size: 1.25rem;
         font-weight: 800;
         line-height: 1.25;
         text-shadow: none;
     }
 
-    #home-intro .home-intro__film-meta span + span {
+    #home-intro .home-intro__film-meta span+span {
         background: rgba(0, 0, 0, 0.65);
         color: #eee;
     }
@@ -580,7 +570,7 @@
         max-width: 100%;
         overflow: hidden;
         color: #fff;
-        font-size: clamp(1.05rem, 1.7vw, 1.5rem);
+        font-size: clamp(1.05rem, 1.7vw, 2.5rem);
         font-weight: 800;
         line-height: 1.2;
         text-overflow: ellipsis;
@@ -589,7 +579,7 @@
 
     #home-intro .home-intro__film-rating {
         color: #ddd;
-        font-size: 0.72rem;
+        font-size: 1rem;
         line-height: 1.3;
     }
 
@@ -640,31 +630,7 @@
         display: grid;
         place-items: center;
         color: #ccc;
-        font-size: 0.6rem;
-    }
-
-    #home-intro .home-intro__empty {
-        min-height: 250px;
-        display: grid;
-        place-content: center;
-        justify-items: center;
-        gap: 8px;
-        padding: 24px;
-        color: #ccc;
-        text-align: center;
-    }
-
-    #home-intro .home-intro__empty p {
-        margin: 0;
-        color: inherit;
-        font-size: 0.9rem;
-        animation: none;
-    }
-
-    #home-intro .home-intro__empty a {
-        color: var(--home-hero-accent);
-        font-size: 0.85rem;
-        font-weight: 700;
+        font-size: 1.25rem;
     }
 
     #home-intro a:focus-visible,
@@ -710,6 +676,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
+
         #home-intro .home-intro__link,
         #home-intro .home-intro__slide,
         #home-intro .home-intro__slide .home-intro__poster,
@@ -764,7 +731,7 @@
         if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
             window.setInterval(() => {
                 showSlide(activeIndex + 1);
-            }, 10000);
+            }, 4000);
         }
     })();
 </script>

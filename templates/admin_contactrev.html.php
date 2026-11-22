@@ -2,6 +2,7 @@
     <h2 style="text-align: left;">Send New Message to User</h2>
     <div class="glass-reply-area">
         <form method="post" action="contact_rev.php" style="background:transparent; border:none; box-shadow:none; padding:0; display:block; width:100%;">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf->token(), ENT_QUOTES, 'UTF-8') ?>">
             <label style="display:block; text-align:left;">Select Reviewer:</label>
             <select name="reviewer_id" required style="width:100%;">
                 <option value="">-- Choose Reviewer --</option>

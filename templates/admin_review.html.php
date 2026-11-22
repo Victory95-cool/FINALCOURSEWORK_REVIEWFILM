@@ -1,5 +1,4 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="admin_style.css">
 
 <h2>Manage Reviews List</h2>
 
@@ -84,6 +83,7 @@
                     </form>
 
                     <form action="delete.php" method="post" style="display:inline-block" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf->token(), ENT_QUOTES, 'UTF-8') ?>">
                         <input type="hidden" name="id" value="<?= $review['id'] ?>">
                         <input type="hidden" name="type" value="review">
                         <button type="submit" class="btn-delete">Delete</button>

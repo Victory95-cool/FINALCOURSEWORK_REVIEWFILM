@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 03, 2026 at 07:11 AM
+-- Generation Time: Nov 22, 2026 at 06:48 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -30,16 +30,18 @@ SET time_zone = "+00:00";
 CREATE TABLE `admins` (
   `id` int(11) NOT NULL,
   `username` varchar(255) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
   `password` varchar(255) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `avatar_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admins`
 --
 
-INSERT INTO `admins` (`id`, `username`, `password`, `created_at`) VALUES
-(1, 'Victor', '$2y$10$JTSZBeX4IXwdeU3k0yVcLubxIcMJaCrOWg/Y6sI4ZHmzj/T5H2nrG', '2026-10-21 03:41:29');
+INSERT INTO `admins` (`id`, `username`, `email`, `password`, `created_at`, `avatar_path`) VALUES
+(1, 'Victor', 'victor@rv.com', '$2y$10$JTSZBeX4IXwdeU3k0yVcLubxIcMJaCrOWg/Y6sI4ZHmzj/T5H2nrG', '2026-10-21 03:41:29', 'images/avatars/cfd42690800f127e3e20343f1a770e3c.jpg');
 
 -- --------------------------------------------------------
 
@@ -69,7 +71,8 @@ INSERT INTO `conversations` (`id`, `subject`, `created_at`) VALUES
 (31, 'A Request for a Movie', '2026-04-24 03:48:03'),
 (32, 'NEW MOVIE 🐦‍🔥🐦‍🔥', '2026-04-24 03:51:09'),
 (33, 'NEW MOPVIE', '2026-05-15 06:26:06'),
-(34, 'Add new film', '2026-11-02 15:48:26');
+(34, 'Add new film', '2026-11-02 15:48:26'),
+(40, 'Renew', '2026-11-12 10:13:40');
 
 -- --------------------------------------------------------
 
@@ -287,7 +290,9 @@ INSERT INTO `mails_box` (`id`, `conversation_id`, `sender`, `reviewers_id`, `sub
 (50, 32, 'admin', 38, 'NEW MOVIE 🐦‍🔥🐦‍🔥', 'hulk is coming', '2026-04-24 03:51:09', 0),
 (51, 33, 'admin', 27, 'NEW MOPVIE', 'CHANI WOOJI ra phim', '2026-05-15 06:26:06', 1),
 (52, 34, 'reviewer', 27, 'Add new film', 'add a new film in 2026, pls!', '2026-11-02 15:48:26', 1),
-(53, 34, 'admin', 27, 'Re: Add new film', 'sure', '2026-11-02 15:48:47', 1);
+(53, 34, 'admin', 27, 'Re: Add new film', 'sure', '2026-11-02 15:48:47', 1),
+(60, 40, 'reviewer', 63, 'Renew', 'Add new films', '2026-11-12 10:13:40', 1),
+(61, 40, 'admin', 63, 'Re: Renew', 'Aight, bet', '2026-11-12 10:14:09', 1);
 
 -- --------------------------------------------------------
 
@@ -301,35 +306,41 @@ CREATE TABLE `review` (
   `rating` int(11) NOT NULL CHECK (`rating` between 1 and 10),
   `review_date` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `reviewers_id` int(11) NOT NULL,
-  `film_id` int(11) NOT NULL
+  `film_id` int(11) NOT NULL,
+  `image_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `review`
 --
 
-INSERT INTO `review` (`id`, `review_text`, `rating`, `review_date`, `reviewers_id`, `film_id`) VALUES
-(1, 'The infinity time in space gave me the feeling i\'d never have before', 5, '2026-03-27 17:06:42', 2, 2),
-(2, 'This Action Movie is one of the best DC movie ever!🔥', 5, '2026-03-27 17:06:42', 3, 3),
-(3, 'A beautiful story about space and humanity.', 5, '2026-03-27 15:29:00', 4, 4),
-(4, 'What an amazing movie', 4, '2026-04-12 00:48:26', 5, 20),
-(5, 'This movie had brought me to the mysterious feeling and I\'d never experienced before', 5, '2026-03-27 17:06:42', 6, 1),
-(6, 'I am Batmannnn!!!', 5, '2026-03-27 17:06:42', 2, 3),
-(7, 'hahaha this movie has made my day!! 🤣🤣', 5, '2026-03-27 17:06:42', 6, 6),
-(14, 'Amazing choreography ', 5, '2026-04-11 14:25:02', 5, 2),
-(16, 'I am a Marvel Fan, and this movie has me emotionally in tears of joy', 5, '2026-04-05 01:00:58', 4, 13),
-(17, 'Boring', 1, '2026-04-05 01:54:26', 14, 1),
-(22, 'As a fan of Spiderman and Andrew, he must have a trilogy for himself. This movie was too good to be abandoned 😖😖', 5, '2026-04-12 20:16:37', 21, 26),
-(26, 'Crime Syndicate 🫆', 3, '2026-04-12 17:06:42', 21, 25),
-(28, 'great character as a great actor like Christian Bale ', 5, '2026-04-12 20:18:01', 27, 3),
-(29, 'Poor Rose 😖😖', 5, '2026-04-12 20:20:37', 3, 5),
-(30, 'After this, I\'d might be crazy like him 🃏🤡🤡', 4, '2026-04-12 21:54:38', 27, 25),
-(31, 'This movie has always been on my movie night, go go Rocky🥊🥊🍿🍿', 5, '2026-04-12 22:06:26', 27, 14),
-(33, 'No Tony 🥹🥹', 5, '2026-04-13 22:22:31', 2, 13),
-(34, 'What a great movie for a stress relief', 4, '2026-04-13 22:24:29', 6, 6),
-(40, 'amazing', 4, '2026-04-24 10:50:29', 2, 30),
-(41, 'Bad', 1, '2026-10-28 11:00:39', 39, 27),
-(42, 'AMazing', 5, '2026-11-02 22:17:34', 27, 26);
+INSERT INTO `review` (`id`, `review_text`, `rating`, `review_date`, `reviewers_id`, `film_id`, `image_path`) VALUES
+(1, 'The infinity time in space gave me the feeling i\'d never have before', 5, '2026-03-27 17:06:42', 2, 2, NULL),
+(2, 'This Action Movie is one of the best DC movie ever!🔥', 5, '2026-03-27 17:06:42', 3, 3, NULL),
+(3, 'A beautiful story about space and humanity.', 5, '2026-03-27 15:29:00', 4, 4, NULL),
+(4, 'What an amazing movie', 4, '2026-04-12 00:48:26', 5, 20, NULL),
+(5, 'This movie had brought me to the mysterious feeling and I\'d never experienced before', 5, '2026-03-27 17:06:42', 6, 1, NULL),
+(6, 'I am Batmannnn!!!', 5, '2026-03-27 17:06:42', 2, 3, NULL),
+(7, 'hahaha this movie has made my day!! 🤣🤣', 5, '2026-03-27 17:06:42', 6, 6, NULL),
+(14, 'Amazing choreography ', 5, '2026-04-11 14:25:02', 5, 2, NULL),
+(16, 'I am a Marvel Fan, and this movie has me emotionally in tears of joy', 5, '2026-04-05 01:00:58', 4, 13, NULL),
+(17, 'Boring', 1, '2026-04-05 01:54:26', 14, 1, NULL),
+(22, 'As a fan of Spiderman and Andrew, he must have a trilogy for himself. This movie was too good to be abandoned 😖😖', 5, '2026-04-12 20:16:37', 21, 26, NULL),
+(26, 'Crime Syndicate 🫆', 3, '2026-04-12 17:06:42', 21, 25, NULL),
+(28, 'great character as a great actor like Christian Bale ', 5, '2026-04-12 20:18:01', 27, 3, NULL),
+(29, 'Poor Rose 😖😖', 5, '2026-04-12 20:20:37', 3, 5, NULL),
+(30, 'After this, I\'d might be crazy like him 🃏🤡🤡', 4, '2026-04-12 21:54:38', 27, 25, NULL),
+(31, 'This movie has always been on my movie night, go go Rocky🥊🥊🍿🍿', 5, '2026-04-12 22:06:26', 27, 14, NULL),
+(33, 'No Tony 🥹🥹', 5, '2026-04-13 22:22:31', 2, 13, NULL),
+(34, 'What a great movie for a stress relief', 4, '2026-04-13 22:24:29', 6, 6, NULL),
+(40, 'amazing', 4, '2026-04-24 10:50:29', 2, 30, NULL),
+(41, 'Bad', 1, '2026-10-28 11:00:39', 39, 27, NULL),
+(42, 'Amazing', 5, '2026-11-10 14:29:03', 27, 26, NULL),
+(46, 'All Kneel to DOOOMMMM!!!', 5, '2026-11-05 01:23:07', 27, 34, NULL),
+(47, 'Terrified as DOOM', 5, '2026-11-16 16:13:50', 63, 34, NULL),
+(49, 'great', 5, '2026-11-23 00:18:36', 27, 13, NULL),
+(50, 'Haha', 1, '2026-11-23 00:19:12', 27, 25, 'images/review-images/a3a908af5dc1a00427deed94b99f9910.jpg'),
+(51, 'haha', 1, '2026-11-23 00:19:38', 27, 25, NULL);
 
 -- --------------------------------------------------------
 
@@ -342,28 +353,39 @@ CREATE TABLE `reviewers` (
   `username` varchar(100) NOT NULL,
   `phone_number` varchar(255) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
-  `created_at` datetime DEFAULT current_timestamp()
+  `created_at` datetime DEFAULT current_timestamp(),
+  `password_hash` varchar(255) DEFAULT NULL,
+  `is_banned` tinyint(1) NOT NULL DEFAULT 0,
+  `ban_message` text DEFAULT NULL,
+  `banned_at` datetime DEFAULT NULL,
+  `avatar_path` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `reviewers`
 --
 
-INSERT INTO `reviewers` (`id`, `username`, `phone_number`, `email`, `created_at`) VALUES
-(1, 'Alice Nguyennn', '0901234567', 'alice@gmail.com', '2026-03-06 17:28:51'),
-(2, 'Brian Tran', '0902345678', 'brian@gmail.com', '2026-03-06 17:28:51'),
-(3, 'Charlie Pham', '0903456789', 'charlie@gmail.com', '2026-03-06 17:28:51'),
-(4, 'David Le', '0904567890', 'david@gmail.com', '2026-03-06 17:28:51'),
-(5, 'Emma Vu', '0905678901', 'emma@gmail.com', '2026-03-06 17:28:51'),
-(6, 'Frank Hoang', '0906789012', 'frank@gmail.com', '2026-03-06 17:28:51'),
-(14, 'Victor Lam', '09659055941', 'victor123@gmail.com', '2026-04-05 01:46:05'),
-(15, 'Jason Todd', '0834567812', 'jason@gmail.com', '2026-04-05 01:55:28'),
-(21, 'Bao Willy', '1234567890', 'willy@gmail.com', '2026-04-07 17:28:00'),
-(27, 'Dave Tran', '1234567890', 'dave@gmail.com', '2026-04-11 23:51:59'),
-(30, 'Sammy Dutch', '0998123531', 'sammy@gmail.com', '2026-04-15 16:23:52'),
-(36, 'Victor', '0965905941', 'vicky@gmail.com', '2026-04-16 21:53:03'),
-(38, 'Hoàng samson', '1111111111', 'samson@gmail.com', '2026-04-24 10:50:02'),
-(39, 'Tommy', '1234567890', 'tommy@gmail.com', '2026-10-28 10:56:24');
+INSERT INTO `reviewers` (`id`, `username`, `phone_number`, `email`, `created_at`, `password_hash`, `is_banned`, `ban_message`, `banned_at`, `avatar_path`) VALUES
+(1, 'Alice Nguyennn', '0901234567', 'alice@gmail.com', '2026-03-06 17:28:51', NULL, 0, NULL, NULL, NULL),
+(2, 'Brian Tran', '0902345678', 'brian@gmail.com', '2026-03-06 17:28:51', NULL, 0, NULL, NULL, NULL),
+(3, 'Charlie Pham', '0903456789', 'charlie@gmail.com', '2026-03-06 17:28:51', NULL, 0, NULL, NULL, NULL),
+(4, 'David Le', '0904567890', 'david@gmail.com', '2026-03-06 17:28:51', NULL, 0, NULL, NULL, NULL),
+(5, 'Emma Vu', '0905678901', 'emma@gmail.com', '2026-03-06 17:28:51', NULL, 0, NULL, NULL, NULL),
+(6, 'Frank Hoang', '0906789012', 'frank@gmail.com', '2026-03-06 17:28:51', NULL, 0, NULL, NULL, NULL),
+(14, 'Victor Lam', '09659055941', 'victor123@gmail.com', '2026-04-05 01:46:05', NULL, 0, NULL, NULL, NULL),
+(15, 'Jason Todd', '0834567812', 'jason@gmail.com', '2026-04-05 01:55:28', NULL, 0, NULL, NULL, NULL),
+(21, 'Bao Willy', '1234567890', 'willy@gmail.com', '2026-04-07 17:28:00', NULL, 0, NULL, NULL, NULL),
+(27, 'Dave Tran', '0337127828', 'dave@gmail.com', '2026-04-11 23:51:59', '$2y$10$gWlGL4BsjIm3/Snka6WUpOXNf.9ty7DANAw.Dt2QoR1NRvdJ3SHrO', 0, NULL, NULL, 'images/avatars/f709c8faacdb14506bc24aff27adf02b.jpg'),
+(30, 'Sammy Dutch', '0998123531', 'sammy@gmail.com', '2026-04-15 16:23:52', NULL, 0, NULL, NULL, NULL),
+(36, 'Victor', '0965905941', 'victor@gmail.com', '2026-04-16 21:53:03', NULL, 0, NULL, NULL, NULL),
+(38, 'Hoàng samson', '1111111111', 'samson@gmail.com', '2026-04-24 10:50:02', NULL, 0, NULL, NULL, NULL),
+(39, 'Tommy', '1234567890', 'tommy@gmail.com', '2026-10-28 10:56:24', NULL, 0, NULL, NULL, NULL),
+(56, 'Phuc', '2345678901', 'phuc@gmail.com', '2026-11-04 11:44:05', '$2y$10$5LOGIZjrAlrBPCw/./fNCeUL8qYuS.WYx4hi16o7oUU0BT/Fjfw.6', 0, NULL, NULL, NULL),
+(57, 'Phuc Nguyen', '0990917865', 'Phuc3g@gmail.com', '2026-11-04 18:15:37', '$2y$10$1grgoaiJUloS5I8qcrJoQeuVTozIvBPAJbSHoB8vRf..p/f3/.Lie', 0, NULL, NULL, NULL),
+(58, 'Phuc Le', '0789123456', 'billyphucle@gmail.com', '2026-11-05 00:53:47', '$2y$10$2g8wF.4XXA83AUXJ7NBqLuaa/DbfylBtsgigzgV7U3Pdw/BP43Wc6', 0, NULL, NULL, NULL),
+(60, 'Tommy Shelby', '0987654789', 'Tamthanlan@gre.ac.uk', '2026-11-11 09:45:10', '$2y$10$SE6lAvZDPqu89F/NiQysRuRj9AugcMgnkFVR/Nx08wl3djTlIxvYq', 1, 'Banned because you\'re humiliating', '2026-11-11 10:50:32', NULL),
+(61, 'Phat Dao', '1234567891', 'phat@gmail.com', '2026-11-11 12:22:43', '$2y$10$rDAOW0/7SAd7XdnXJCxy/.ecY/TS8MeTB8jp3tF7PHaJNYWLAcMTW', 0, NULL, NULL, NULL),
+(63, 'GhHan', '0337127828', 'ghalinhz@gre.ac.uk', '2026-11-12 17:08:36', '$2y$10$lKQevMyI.8qbqqU2OKVR.uyh8FIVuFOR7HeOZrj6hqHWd.hzhNNa.', 0, NULL, NULL, 'images/avatars/unknown avatar.jpg');
 
 -- --------------------------------------------------------
 
@@ -466,7 +488,8 @@ INSERT INTO `stars` (`id`, `name`) VALUES
 --
 ALTER TABLE `admins`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `uq_admins_email` (`email`);
 
 --
 -- Indexes for table `conversations`
@@ -548,7 +571,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `conversations`
 --
 ALTER TABLE `conversations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT for table `directors`
@@ -560,7 +583,7 @@ ALTER TABLE `directors`
 -- AUTO_INCREMENT for table `film`
 --
 ALTER TABLE `film`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `genre`
@@ -572,19 +595,19 @@ ALTER TABLE `genre`
 -- AUTO_INCREMENT for table `mails_box`
 --
 ALTER TABLE `mails_box`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `review`
 --
 ALTER TABLE `review`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT for table `reviewers`
 --
 ALTER TABLE `reviewers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=40;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=64;
 
 --
 -- AUTO_INCREMENT for table `stars`

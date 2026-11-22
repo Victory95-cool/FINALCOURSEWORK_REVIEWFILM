@@ -10,10 +10,10 @@ try {
     $director = $_GET['director_name'] ?? '';
     $sort = $_GET['sort'] ?? 'f.id DESC';
 
-    $genres = Film::allGenres($database);
-    $totalFilms = Film::totalFilms($database, $search, $genre_id, $year_range, $director);
-    $pagination = Pagination::forRequest($totalFilms, $_GET['page'] ?? 1);
-    $films = Film::allFilms(
+    $genres = $filmModel->allGenres($database);
+    $totalFilms = $filmModel->totalFilms($database, $search, $genre_id, $year_range, $director);
+    $pagination = $paginationService->forRequest($totalFilms, $_GET['page'] ?? 1);
+    $films = $filmModel->allFilms(
         $database,
         $search,
         $genre_id,

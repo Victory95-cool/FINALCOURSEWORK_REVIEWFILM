@@ -3,28 +3,9 @@
     <p>Logged in as: <strong><?= htmlspecialchars($savedName) ?></strong></p>
 
     <section class="form-wrapper">
-        <form action="" method="post">
-            <input type="hidden" name="reviewers_name" value="<?= htmlspecialchars($savedName) ?>">
-
-            <label for="existing_reviewers">Post as (Select Name):</label>
-            <select name="existing_reviewers" id="existing_reviewers">
-                <option value=""><?= htmlspecialchars($savedName) ?> (Yourself)</option>
-
-                <?php
-                $approvedFriend = ['Charlie Pham', 'Brian Tran', 'Frank Hoang'];
-
-                foreach ($reviewers as $reviewer):
-                    if (in_array($reviewer['username'], $approvedFriend) && $reviewer['username'] !== $savedName):
-                ?>
-                        <option value="<?= htmlspecialchars($reviewer['username'], ENT_QUOTES, 'UTF-8') ?>">
-                            Post for a friend: <?= htmlspecialchars($reviewer['username'], ENT_QUOTES, 'UTF-8') ?>
-                        </option>
-                <?php
-                    endif;
-                endforeach;
-                ?>
-            </select>
-
+        <?php if ($error !== ''): ?><p class="form-error" role="alert"><?= htmlspecialchars($error, ENT_QUOTES, 'UTF-8') ?></p><?php endif; ?>
+        <form action="" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf->token(), ENT_QUOTES, 'UTF-8') ?>">
             <label for="film">Select Film:</label>
             <select name="film" id="film" required>
                 <option value="">---Select a Film---</option>
@@ -37,6 +18,9 @@
 
             <label for="review_text">Add a new comment:</label>
             <textarea name="review_text" id="review_text" rows="3" cols="40" required></textarea>
+
+            <label for="meme-image">Attach a meme image (JPG, PNG, or WebP; up to 5 MB, optional):</label>
+            <input type="file" id="meme-image" name="meme_image" accept="image/jpeg,image/png,image/webp">
 
             <label for="rating">Rating:</label>
             <select name="rating" required>

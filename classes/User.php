@@ -8,7 +8,7 @@ abstract class User
     protected $email;
     protected $phoneNumber;
 
-    public function __construct($id, $username, $email = null, $phoneNumber = null)
+    public function __construct($id = null, $username = null, $email = null, $phoneNumber = null)
     {
         $this->id = $id;
         $this->username = $username;
@@ -38,7 +38,7 @@ abstract class User
 
     // Hàm dùng chung: tìm một người dùng theo tên đăng nhập
     // $table = 'admins' hoặc 'reviewers'
-    protected static function fetchByUsername($pdo, $table, $username)
+    protected function fetchByUsername($pdo, $table, $username)
     {
         $query = Database::query(
             $pdo,

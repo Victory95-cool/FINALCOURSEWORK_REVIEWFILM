@@ -3,7 +3,7 @@
 class Conversation
 {
     // Reviewer gửi mail mới cho admin
-    public static function createConversation($pdo, $subject, $reviewer_id, $body)
+    public function createConversation($pdo, $subject, $reviewer_id, $body)
     {
         Database::query($pdo, "INSERT INTO conversations (subject, created_at) VALUES (:subject, NOW())", [
             ':subject' => $subject
@@ -21,7 +21,7 @@ class Conversation
     }
 
     // Admin gửi mail mới cho reviewer
-    public static function adminCreateConversation($pdo, $subject, $reviewer_id, $body)
+    public function adminCreateConversation($pdo, $subject, $reviewer_id, $body)
     {
         Database::query($pdo, "INSERT INTO conversations (subject, created_at) VALUES (:subject, NOW())", [
             ':subject' => $subject
@@ -40,7 +40,7 @@ class Conversation
     }
 
     // Lấy các tin nhắn trong một cuộc hội thoại
-    public static function getConversation($pdo, $conversation_id)
+    public function getConversation($pdo, $conversation_id)
     {
         $parameters = [':cid' => $conversation_id];
         $sql = "SELECT 
@@ -56,7 +56,7 @@ class Conversation
     }
 
     // Trả lời một cuộc hội thoại
-    public static function replyToConversation($pdo, $conversation_id, $sender_role, $reviewer_id, $subject, $body)
+    public function replyToConversation($pdo, $conversation_id, $sender_role, $reviewer_id, $subject, $body)
     {
         $sql = "INSERT INTO mails_box (conversation_id, sender, reviewers_id, subject, body, created_at, is_read)
                 VALUES (:cid, :sender, :rid, :subject, :body, NOW(), 0)";
@@ -71,7 +71,7 @@ class Conversation
     }
 
     // Đánh dấu đã đọc các tin nhắn của người gửi bên kia
-    public static function markAsRead($pdo, $conversation_id, $viewer_role)
+    public function markAsRead($pdo, $conversation_id, $viewer_role)
     {
         $target_sender = ($viewer_role === 'admin') ? 'reviewer' : 'admin';
         $sql = "UPDATE mails_box SET is_read = 1 
@@ -80,20 +80,14 @@ class Conversation
     }
 
     // Xóa một cuộc hội thoại (các tin nhắn bên trong)
-    public static function deleteConversation($pdo, $id)
+    public function deleteConversation($pdo, $id)
     {
         Database::query($pdo, "DELETE FROM mails_box WHERE conversation_id = :id", [':id' => $id]);
         Database::query($pdo, "DELETE FROM conversations WHERE id = :id", [':id' => $id]);
     }
 
-    // Xóa một tin nhắn đơn lẻ
-    public static function deleteEmail($pdo, $email_id)
-    {
-        Database::query($pdo, "DELETE FROM mails_box WHERE id = :id", [':id' => $email_id]);
-    }
-
     // Lấy hộp thư của một reviewer
-    public static function getReviewerMailbox($pdo, $reviewer_id)
+    public function getReviewerMailbox($pdo, $reviewer_id)
     {
         if (!$reviewer_id) {
             return [];
@@ -110,10 +104,24 @@ class Conversation
         return Database::query($pdo, $sql, [':rid' => $reviewer_id])->fetchAll();
     }
 
-    // Lấy danh sách reviewer để chọn người gửi mail
-    public static function getContactReviewerList($pdo)
+    public function isReviewerConversationOwner($pdo, $conversationId, $reviewerId)
     {
-        $query = Database::query($pdo, 'SELECT id, username FROM reviewers ORDER BY username ASC');
-        return $query->fetchAll();
+        return (bool) Database::query(
+            $pdo,
+            'SELECT EXISTS (
+                 SELECT 1 FROM mails_box
+                 WHERE conversation_id = :owned_conversation AND reviewers_id = :owner_id
+             ) AND NOT EXISTS (
+                 SELECT 1 FROM mails_box
+                 WHERE conversation_id = :other_conversation
+                   AND (reviewers_id IS NULL OR reviewers_id <> :other_owner_id)
+             )',
+            [
+                ':owned_conversation' => $conversationId,
+                ':owner_id' => $reviewerId,
+                ':other_conversation' => $conversationId,
+                ':other_owner_id' => $reviewerId
+            ]
+        )->fetchColumn();
     }
 }

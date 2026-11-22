@@ -1,7 +1,7 @@
 <?php
-session_start();
+require_once __DIR__ . '/../../includes/bootstrap.php';
 
-if (!isset($_SESSION['Authorised']) || $_SESSION['Authorised'] !== "Y") {
+if (!$adminAuth->isAuthenticated()) {
     header("Location: Login.php");
     exit();
 }

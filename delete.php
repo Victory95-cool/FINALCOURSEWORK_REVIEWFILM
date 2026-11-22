@@ -1,7 +1,9 @@
 <?php
+require_once __DIR__ . '/includes/bootstrap.php';
+$userController->requireLogin();
 try {
-    require_once __DIR__ . '/includes/bootstrap.php';
     $database = Database::getConnection();
+    $csrf->assertValid($_POST['csrf_token'] ?? null);
     $id = $_POST['id'] ?? null;
     $isConversation = isset($_POST['type']) && $_POST['type'] === 'conversation';
 
@@ -11,10 +13,19 @@ try {
     }
 
     if ($isConversation) {
-        Conversation::deleteConversation($database, $id);
+        if (!$conversationModel->isReviewerConversationOwner($database, $id, $userController->currentUserId())) {
+            http_response_code(403);
+            exit('You are not allowed to delete this conversation.');
+        }
+        $conversationModel->deleteConversation($database, $id);
         header('location: mailbox_reviewer.php');
     } else {
-        Review::deleteReview($database, $id);
+        $review = $reviewModel->getReview($database, $id);
+        if (!$review || (int) $review['reviewers_id'] !== $userController->currentUserId()) {
+            http_response_code(403);
+            exit('You are not allowed to delete this review.');
+        }
+        $reviewModel->deleteReview($database, $id);
         header('location: review.php');
     }
     exit;
@@ -23,4 +34,4 @@ try {
     $title = 'An error has occurred';
     $output = 'Database error: ' . $e->getMessage();
 }
-include 'templates/layout.html.php';
+include 'templates/user_layout.html.php';

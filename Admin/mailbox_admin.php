@@ -14,7 +14,7 @@ $sql = "SELECT c.id, c.subject, MAX(m.created_at) as created_at,
         ORDER BY created_at DESC";
 $convs = Database::query($database, $sql)->fetchAll();
 
-$allReviewers = Reviewer::allReviewers($database);
+$allReviewers = $reviewerModel->allReviewers($database);
 
 $title = "Admin Mailbox";
 ob_start();

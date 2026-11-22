@@ -8,10 +8,10 @@ try {
     $search = $_GET['search'] ?? '';
     $sort = $_GET['sort'] ?? 'r.review_date DESC';
 
-    $totalReview = Review::totalReview($database);
-    $totalItems = Review::totalFilteredReviews($database, $search);
-    $pagination = Pagination::forRequest($totalItems, $_GET['page'] ?? 1);
-    $reviews = Review::allReviewsFiltered(
+    $totalReview = $reviewModel->totalReview($database);
+    $totalItems = $reviewModel->totalFilteredReviews($database, $search);
+    $pagination = $paginationService->forRequest($totalItems, $_GET['page'] ?? 1);
+    $reviews = $reviewModel->allReviewsFiltered(
         $database,
         $search,
         $sort,

@@ -91,7 +91,7 @@
                 </tbody>
             </table>
         <?php endif; ?>
-        <?php include __DIR__ . '/pagination.html.php'; ?>
+        <?php include __DIR__ . '/user_pagination.html.php'; ?>
     </section>
 </div>
 

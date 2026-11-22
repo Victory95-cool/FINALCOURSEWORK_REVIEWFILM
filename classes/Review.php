@@ -3,14 +3,28 @@
 class Review
 {
     // Đếm tổng số review
-    public static function totalReview($pdo)
+    public function totalReview($pdo)
     {
         $query = Database::query($pdo, "SELECT COUNT(*) FROM review");
         $row = $query->fetch();
         return $row[0];
     }
 
-    public static function totalFilteredReviews($pdo, $search = '')
+    public function allForReviewer($pdo, $reviewerId)
+    {
+        return Database::query(
+            $pdo,
+            'SELECT r.id, r.review_text, r.rating, r.review_date, f.id AS film_id,
+                    f.title, f.released_year, f.poster
+             FROM review r
+             INNER JOIN film f ON f.id = r.film_id
+             WHERE r.reviewers_id = :reviewer_id
+             ORDER BY r.review_date DESC',
+            [':reviewer_id' => $reviewerId]
+        )->fetchAll();
+    }
+
+    public function totalFilteredReviews($pdo, $search = '')
     {
         $sql = 'SELECT COUNT(*)
                 FROM review r
@@ -28,7 +42,7 @@ class Review
     }
 
     // Cập nhật nội dung và điểm của một review
-    public static function updateReview($pdo, $reviewid, $reviewtext, $rating, $film_id = null)
+    public function updateReview($pdo, $reviewid, $reviewtext, $rating, $film_id = null, $imagePath = null)
     {
         $sql = 'UPDATE review
                 SET review_text = :reviewtext,
@@ -45,13 +59,18 @@ class Review
             $parameters[':film_id'] = $film_id;
         }
 
+        if ($imagePath !== null) {
+            $sql .= ', image_path = :image_path';
+            $parameters[':image_path'] = $imagePath;
+        }
+
         $sql .= ' WHERE id = :id';
 
         Database::query($pdo, $sql, $parameters);
     }
 
     // Thêm review mới (tự tìm hoặc tạo reviewer theo tên)
-    public static function insertReview($pdo, $review_text, $rating, $reviewers_name, $film_id)
+    public function insertReview($pdo, $review_text, $rating, $reviewers_name, $film_id)
     {
         try {
             $pdo->beginTransaction();
@@ -88,8 +107,24 @@ class Review
         }
     }
 
+    public function insertReviewerReview($pdo, $review_text, $rating, $reviewerId, $filmId, $imagePath = null)
+    {
+        Database::query(
+            $pdo,
+            'INSERT INTO review (review_text, rating, reviewers_id, film_id, review_date, image_path)
+             VALUES (:review_text, :rating, :reviewer_id, :film_id, NOW(), :image_path)',
+            [
+                ':review_text' => $review_text,
+                ':rating' => $rating,
+                ':reviewer_id' => $reviewerId,
+                ':film_id' => $filmId,
+                ':image_path' => $imagePath
+            ]
+        );
+    }
+
     // Lấy một review theo id (kèm tên phim và poster)
-    public static function getReview($pdo, $id)
+    public function getReview($pdo, $id)
     {
         $parameters = [':id' => $id];
         $sql = 'SELECT review.*, film.poster, film.title 
@@ -101,9 +136,9 @@ class Review
     }
 
     // Liệt kê review, có tìm kiếm và sắp xếp
-    public static function allReviewsFiltered($pdo, $search = '', $sort = 'r.review_date DESC', $limit = null, $offset = 0)
+    public function allReviewsFiltered($pdo, $search = '', $sort = 'r.review_date DESC', $limit = null, $offset = 0)
     {
-        $sql = 'SELECT r.id, r.review_text, r.rating, r.review_date, rev.username, f.title, g.name AS genre, f.poster
+        $sql = 'SELECT r.id, r.reviewers_id, r.review_text, r.rating, r.review_date, rev.username, f.title, g.name AS genre, f.poster
                 FROM review r
                 INNER JOIN reviewers rev ON r.reviewers_id = rev.id
                 INNER JOIN film f ON r.film_id = f.id
@@ -129,7 +164,7 @@ class Review
     }
 
     // Xóa một review
-    public static function deleteReview($pdo, $id)
+    public function deleteReview($pdo, $id)
     {
         Database::query($pdo, 'DELETE FROM review WHERE id = :id', [':id' => $id]);
     }

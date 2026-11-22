@@ -7,23 +7,25 @@ $database = Database::getConnection();
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = trim($_POST['admin_user'] ?? '');
-    $password = trim($_POST['admin_password'] ?? '');
+    if (!$csrf->isValid($_POST['csrf_token'] ?? null)) {
+        $error = 'Invalid request token. Reload this sign-in page and try again.';
+    } else {
+    $usernameInput = $_POST['admin_user'] ?? '';
+    $password = $_POST['admin_password'] ?? '';
+    $username = is_string($usernameInput) ? trim($usernameInput) : '';
 
-    $admin = Admin::getAdminByUsername($database, $username);
+    $admin = $username !== '' ? $adminModel->getAdminByUsername($database, $username) : false;
 
-    if ($admin && password_verify($password, $admin['password'])) {
-        $_SESSION['Authorised'] = "Y";
-        $_SESSION['username'] = $admin['username'];
-        $_SESSION['admin_id'] = $admin['id'];
+    if ($admin && is_string($password) && password_verify($password, $admin['password'])) {
+        $adminAuth->signIn($admin);
         header("Location: ../admin_review.php");
         exit();
     } else {
         $error = "Invalid username or password";
 
         $username = '';
-        $password = '';
+    }
     }
 }
 
-include __DIR__ . '/../../templates/login.html.php';
+include __DIR__ . '/../../templates/admin_login.html.php';

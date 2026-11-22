@@ -4,6 +4,7 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 $database = Database::getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $csrf->assertValid($_POST['csrf_token'] ?? null);
 
     try {
 
@@ -13,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $admin_name    = trim($_POST['admin_name'] ?? null);
         $film_id      = $_POST['film'] ?? null;
 
-        Review::insertReview($database, $review_text, $rating, $reviewers_name, $film_id);
+        $reviewModel->insertReview($database, $review_text, $rating, $reviewers_name, $film_id);
 
         header('Location: admin_review.php');
         exit;
@@ -23,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
 
-    $films = Film::allFilms($database);
-    $reviewers = Reviewer::allReviewers($database);
+    $films = $filmModel->allFilms($database);
+    $reviewers = $reviewerModel->allReviewers($database);
 
     $title = 'Add review';
 

@@ -4,12 +4,13 @@ require_once __DIR__ . '/../includes/bootstrap.php';
 $database = Database::getConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_reply'])) {
+    $csrf->assertValid($_POST['csrf_token'] ?? null);
     $conv_id = $_POST['conversation_id'];
     $rev_id = $_POST['reviewer_id'];
     $subject = "Re: " . $_POST['subject'];
     $body = $_POST['reply_message'];
 
-    Conversation::replyToConversation($database, $conv_id, 'admin', $rev_id, $subject, $body);
+    $conversationModel->replyToConversation($database, $conv_id, 'admin', $rev_id, $subject, $body);
 
     header("Location: conversation.php?id=" . $conv_id . "&status=sent");
     exit();
@@ -23,9 +24,9 @@ if (!$id) {
 }
 
 try {
-    $messages = Conversation::getConversation($database, $id);
+    $messages = $conversationModel->getConversation($database, $id);
     $current_role = (strpos($_SERVER['PHP_SELF'], '/Admin/') !== false) ? 'admin' : 'reviewer';
-    Conversation::markAsRead($database, $id, $current_role);
+    $conversationModel->markAsRead($database, $id, $current_role);
 
     if (!$messages) {
         throw new Exception("Conversation not found.");
@@ -33,7 +34,7 @@ try {
 
     $title = "Conversation Thread - View Messages";
     ob_start();
-    include '../templates/conversation.html.php';
+    include '../templates/admin_conversation.html.php';
     $output = ob_get_clean();
 } catch (Exception $e) {
     $title = "Error";

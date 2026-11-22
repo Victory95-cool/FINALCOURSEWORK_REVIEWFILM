@@ -16,7 +16,7 @@ This Film Review Management System allows:
 ## 📁 Project Structure
 
 ```
-d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
+d:\INNOVATION DATABASE XAMPP\htdocs\COMP1842\Coursework - Baseline\Films\
 ├── .git/                       # Git repository
 ├── Admin/                      # Admin section
 │   ├── login/                  # Admin login pages
@@ -25,8 +25,7 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 │   │   ├── Login.php
 │   │   ├── Logout.php
 │   │   ├── Notauthorised.php
-│   │   ├── Validate.php
-│   │   └── Wrongpassword.php
+│   │   └── Validate.php
 │   ├── addfilms.php           # Add new films
 │   ├── addreview.php          # Add reviews (admin)
 │   ├── addreviewers.php       # Manage reviewers
@@ -39,15 +38,22 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 │   ├── editreviewers.php      # Edit reviewer info
 │   ├── films.php              # Manage films list
 │   ├── mailbox_admin.php      # Admin messages
-│   └── reviewers.php          # Manage reviewers list
+│   ├── reviewers.php          # Manage and ban/block reviewers
+│   ├── ban_reviewer.php       # Ban and unban reviewer accounts
+│   └── profile.php            # Admin profile management
 │
-├── includes/                   # Backend utilities
-│   ├── DatabaseConnection.php # DB connection config
-│   └── DatabaseFunction.php   # Database operations
+├── classes/                    # OOP domain and service classes
+│   ├── Database.php
+│   ├── UserController.php
+│   ├── Reviewer.php / ReviewerAuth.php
+│   ├── Admin.php / AdminAuth.php
+│   ├── Film.php / Review.php
+│   ├── Csrf.php / ImageUpload.php
+│   └── Watchlist.php / ProfileImage.php / Pagination.php
+├── includes/
+│   └── bootstrap.php           # Loads classes and creates shared instances
 │
 ├── templates/                  # HTML templates
-│   ├── addreview.html.php
-│   ├── addreviewers.html.php
 │   ├── admin_addfilms.html.php
 │   ├── admin_addreview.html.php
 │   ├── admin_addreviewers.html.php
@@ -60,17 +66,24 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 │   ├── admin_mailbox.html.php
 │   ├── admin_review.html.php
 │   ├── admin_reviewers.html.php
-│   ├── contact_admin.html.php
-│   ├── conversation.html.php
-│   ├── editreview.html.php
-│   ├── filmdetail.html.php
-│   ├── films.html.php
-│   ├── home.html.php
-│   ├── layout.html.php
-│   ├── login.html.php
-│   ├── rev_conversation.html.php
-│   ├── review.html.php
-│   └── reviewer_mailbox.html.php
+│   ├── admin_conversation.html.php
+│   ├── admin_login.html.php
+│   ├── pagination.html.php
+│   ├── user_addreview.html.php
+│   ├── user_addreviewers.html.php
+│   ├── user_contact_admin.html.php
+│   ├── user_conversation.html.php
+│   ├── user_editreview.html.php
+│   ├── user_filmdetail.html.php
+│   ├── user_films.html.php
+│   ├── user_home.html.php
+│   ├── user_layout.html.php
+│   ├── user_pagination.html.php
+│   ├── user_review.html.php
+│   ├── user_profile.html.php
+│   ├── user_password_reset.html.php
+│   ├── user_banned.html.php
+│   └── user_reviewer_mailbox.html.php
 │
 ├── images/                     # Static images & media
 ├── style.css                   # User interface styling
@@ -83,11 +96,13 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 ├── editreview.php              # Edit review (user)
 ├── contact_admin.php           # Message admin
 ├── conversation.php            # View conversations
-├── addreviewers.php            # Add reviewers (user)
 ├── mailbox_reviewer.php        # Reviewer mailbox
 ├── delete.php                  # Delete operations
-├── logout.php                  # User logout
-├── test_hash.php               # Password testing utility
+├── Login/                      # Reviewer sign-in, sign-up, reset, and sign-out
+├── watchlist.php               # Reviewer watchlist mutations
+├── user_profile.php            # Reviewer profile management
+├── finalcoursework.sql         # Database schema and seed data
+├── database_review_image_migration.sql
 ├── README.md                   # This file
 └── .gitignore                  # Git ignore file
 ```
@@ -129,26 +144,41 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 - Upload film posters
 - Assign directors and cast
 - Filter by genre, year range, sort options
+- Reject duplicate title and release-year combinations
+- Reject duplicate poster files using exact SHA-256 content comparison
 
 ### 3. **Review Management**
 - Users can submit reviews with ratings
-- Admins can view, edit, approve, and delete reviews
+- Users can attach an optional meme image to a review
+- User and admin edit pages can replace or retain the existing meme image
+- Meme images appear only on film metadata pages, not review-list pages
+- Film metadata displays 3 reviews per page
+- Admins can view, edit, and delete reviews
 - Sort by date, rating (high-to-low, low-to-high)
 - Search across film, user, and review text
 
 ### 4. **Reviewer Management** (Admin)
 - Add new reviewers
 - Edit reviewer information
-- Manage reviewer access
+- Ban or unban reviewer accounts with an admin message
+- View the total number of banned reviewers
 - View reviewer activity
 
-### 5. **Messaging System**
+### 5. **Profiles and Watchlists**
+- Reviewers can edit their own username, email, phone number, and avatar
+- New reviewers start with `images/avatars/unknown avatar.jpg` as their profile picture
+- Reviewer profiles show account status, film ratings, and a personal watchlist
+- Add or remove films from the watchlist on the film detail page
+- Admins can edit their own name, email, and avatar from a separate profile page
+- User and admin profile editors open in centered dialogs, with update feedback shown above the profile
+
+### 6. **Messaging System**
 - Admin ↔ Reviewer conversations
 - Message inbox with unread badges
 - Real-time conversation threads
 - Delete message functionality
 
-### 6. **UI/UX Enhancements**
+### 7. **UI/UX Enhancements**
 - Responsive design for mobile & desktop
 - Smooth animations & transitions
 - Modal dialogs for filters and sorting
@@ -187,21 +217,29 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 
 2. **Database Setup**
    - Create MySQL database
-   - Run SQL migrations (if available)
-   - Update `includes/DatabaseConnection.php` with credentials
+   - Import `finalcoursework.sql` for a new database. For an existing database, run `database_review_image_migration.sql` once in phpMyAdmin to add optional review-image storage. Existing installations must also have the reviewer authentication tables and columns described in `finalcoursework.sql`.
+   - Update the PDO connection values in `classes/Database.php` if MySQL credentials or the database name differ
+
+### Reviewer Authentication
+- Sign up with a username, Gmail address, phone number, and password (minimum 8 characters), or sign in with username/email and password.
+- Existing reviewer records have no password. Request a reset link using that account's email; on `localhost`, the link is displayed on the reset page for XAMPP testing. Outside localhost, PHP `mail()` must be configured.
+- Reviews and reviewer conversations are editable/deletable only by their owner. Admin routes and permissions remain separate.
+- Banned reviewers cannot sign in and see the admin-provided ban message.
+- Reviewer and admin sign-out both redirect to the public home page, where Sign In, Sign Up, and Admin buttons are available.
+- Review meme images accept JPG, PNG, or WebP up to 5 MB and are displayed only with film-detail reviews.
+- Reviewer and admin edit forms can replace the existing meme image. Meme images remain absent from review-list tables.
 
 3. **Configure Database Connection**
    ```php
-   // Edit includes/DatabaseConnection.php
-   $host = 'localhost';
-   $user = 'root';
-   $pass = '';
-   $db = 'your_database_name';
+   // Edit classes/Database.php
+   'mysql:host=localhost;dbname=finalcoursework;charset=utf8mb4',
+   'root',
+   ''
    ```
 
 4. **Start XAMPP Services**
    - Start Apache & MySQL from XAMPP Control Panel
-   - Access: `http://localhost/COMP1841/Coursework/`
+   - Access: `http://localhost/COMP1842/Coursework - Baseline/Films/`
 
 5. **First Login**
    - Admin: Navigate to `/Admin/login/`
@@ -213,17 +251,18 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 
 ### Admin Tasks
 1. **Manage Films**: Go to `Admin/films.php` → Add/Edit/Delete
-2. **Moderate Reviews**: Go to `Admin/admin_review.php` → Filter, Sort, Approve
+2. **Moderate Reviews**: Go to `Admin/admin_review.php` → Filter, sort, edit, or delete
 3. **Manage Users**: Go to `Admin/reviewers.php` → Add/Edit reviewers
 4. **Check Messages**: Go to `Admin/mailbox_admin.php` → Respond to reviewers
 
 ### User Tasks
 1. **Browse Films**: `/films.php` → Search by title/genre/year
 2. **View Reviews**: `/review.php` → Filter and sort reviews
-3. **Submit Review**: `/addreview.php` → Fill form and submit
-4. **Edit Review**: `/editreview.php` → Update existing review
-5. **Contact Admin**: `/contact_admin.php` → Send message
-6. **Check Messages**: `/mailbox_reviewer.php` → View responses
+3. **Create Account / Sign In**: `/Login/addreviewers.php` or `/Login/signin.php`
+4. **Submit Review**: `/addreview.php` → Fill form and submit
+5. **Edit Review**: `/editreview.php` → Update existing review
+6. **Contact Admin**: `/contact_admin.php` → Send message
+7. **Check Messages**: `/mailbox_reviewer.php` → View responses
 
 ---
 
@@ -248,12 +287,16 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 
 ## 🔒 Security Features
 
-✅ Session-based authentication  
-✅ Encrypted: Password hashing (test available in `test_hash.php`) and verifying password
-✅ SQL injection prevention  
-✅ XSS protection with `htmlspecialchars()`  
-✅ Role-based access control  
-✅ Input validation  
+✅ Session-based authentication
+✅ Password hashing with PHP `password_hash()` and verification with `password_verify()`
+✅ SQL injection prevention
+✅ XSS protection with `htmlspecialchars()`
+✅ Role-based access control
+✅ CSRF validation for state-changing POST requests
+✅ Server-side input, file type, MIME, and size validation
+✅ Owner-only reviewer edit/delete permissions
+✅ Separate reviewer and admin session states
+✅ Managed poster and review-image upload directories
 
 ---
 
@@ -268,12 +311,15 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 
 ## 🚀 Recent Updates
 
-- ✅ Fixed Select2 styling (Navy & Gold theme)
-- ✅ Implemented unified search+filter layout (left-aligned)
-- ✅ Standardized modal button heights (50px min-height)
-- ✅ Applied Director input styling (background color, padding)
-- ✅ User/Reviewer interface alignment with Admin
-- ✅ CSS specificity improvements for search-bar-container
+- ✅ OOP controller/model/service structure with shared instances from `bootstrap.php`
+- ✅ Separate reviewer and admin authentication
+- ✅ Password reset and reviewer ban/block support
+- ✅ Reviewer/admin sign-out redirects to the public home page with Sign In, Sign Up, and Admin buttons
+- ✅ Review pagination with three reviews per film-detail page
+- ✅ Meme image upload and replacement on user/admin review edit forms
+- ✅ Meme images shown only in film metadata, never in review-list tables
+- ✅ Duplicate validation for film title/release year, poster file content, and reviewer name/email/phone values
+- ✅ Inline CSRF errors on reviewer and admin sign-in forms
 
 ---
 
@@ -281,11 +327,15 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 
 | File | Purpose |
 |------|---------|
-| `DatabaseConnection.php` | MySQL connection configuration |
-| `DatabaseFunction.php` | Reusable database query functions |
+| `classes/Database.php` | PDO connection factory and prepared-query helper |
+| `includes/bootstrap.php` | Loads classes and initializes shared instances |
+| `classes/Csrf.php` | Session CSRF token generation and validation |
+| `classes/ImageUpload.php` | Validates and stores managed review/poster images |
+| `classes/Film.php` | Film CRUD, filtering, poster duplicate checks, and review pagination queries |
+| `classes/Review.php` | Review CRUD and optional `image_path` support |
+| `classes/Reviewer.php` | Reviewer CRUD, password reset, profile, duplicate, and ban operations |
 | `admin_style.css` | Admin dashboard styling (Navy & Gold) |
 | `style.css` | User interface styling (Dark & Gold) |
-| `test_hash.php` | Password hash testing utility |
 | `delete.php` | Unified deletion handler |
 | Various `.php` pages | Route handlers with template rendering |
 
@@ -300,6 +350,10 @@ d:\INNOVATION DATABASE XAMPP\htdocs\COMP1841\Coursework\
 | Button heights inconsistent | Verify `min-height: 50px` and `padding` in modal CSS |
 | Select2 not styling | Ensure `admin_style.css` Select2 rules have high specificity |
 | Images not showing | Verify image paths and `images/` folder permissions |
+| Reviewer sign-out opens the wrong page | Verify the request returns to `Login/signin.php` |
+| Admin sign-out opens the wrong page | Verify the request returns to `Admin/login/Login.php` |
+| Duplicate poster rejected | Upload a different JPG, PNG, or WebP poster file |
+| Review image missing | Run `database_review_image_migration.sql` and verify `review.image_path` exists |
 
 ---
 
@@ -314,7 +368,7 @@ For issues or questions:
 
 ## 📄 License & Author
 
-This project is part of COMP1841 Coursework.
+This project is part of COMP1842 Coursework.
 
 **Author**: [Victory95-cool](https://github.com/Victory95-cool)  
 **Repository**: [FINALCOURSEWORK](https://github.com/Victory95-cool/FINALCOURSEWORK)  
@@ -322,6 +376,6 @@ This project is part of COMP1841 Coursework.
 
 ---
 
-**Last Updated**: April 13, 2026  
+**Last Updated**: November 23, 2026
 **Version**: 1.0  
 **Status**: Active Development" 

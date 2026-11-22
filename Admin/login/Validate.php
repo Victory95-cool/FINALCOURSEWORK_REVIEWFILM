@@ -4,21 +4,20 @@ session_start();
 require_once __DIR__ . '/../../includes/bootstrap.php';
 $database = Database::getConnection();
 
-$username = $_POST['admin_user'] ?? '';
+$usernameInput = $_POST['admin_user'] ?? '';
+$csrf->assertValid($_POST['csrf_token'] ?? null);
 $password = $_POST['admin_password'] ?? '';
+$username = is_string($usernameInput) ? trim($usernameInput) : '';
 
-if ($username === '' || $password === '') {
+if ($username === '' || !is_string($password) || $password === '') {
     header("Location: Login.php?error=empty");
     exit();
 }
 
-$admin = Admin::getAdminByUsername($database, $username);
+$admin = $adminModel->getAdminByUsername($database, $username);
 
 if ($admin && password_verify($password, $admin['password'])) {
-
-    $_SESSION['Authorised'] = "Y";
-    $_SESSION['username'] = $admin['username'];
-    $_SESSION['admin_id'] = $admin['id'];
+    $adminAuth->signIn($admin);
 
     header("Location: ../admin_review.php");
     exit();

@@ -1,23 +1,18 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/bootstrap.php';
+$reviewerAuth->startSession();
 try {
-    require_once __DIR__ . '/includes/bootstrap.php';
     $database = Database::getConnection();
 
-    if (!isset($_SESSION['user_registered_name'])) {
-        $_SESSION['user_registered_name'] = 'Dave Tran';
-        $_SESSION['reviewer_id'] = 27;
-    }
-
-    $currentUser = $_SESSION['user_registered_name'];
+    $currentReviewerId = $userController->currentUserId();
     $isAdmin = isset($_SESSION['is_admin']);
 
     $search = $_GET['search'] ?? '';
     $sort = $_GET['sort'] ?? 'r.review_date DESC';
-    $totalReview = Review::totalReview($database);
-    $totalItems = Review::totalFilteredReviews($database, $search);
-    $pagination = Pagination::forRequest($totalItems, $_GET['page'] ?? 1);
-    $reviews = Review::allReviewsFiltered(
+    $totalReview = $reviewModel->totalReview($database);
+    $totalItems = $reviewModel->totalFilteredReviews($database, $search);
+    $pagination = $paginationService->forRequest($totalItems, $_GET['page'] ?? 1);
+    $reviews = $reviewModel->allReviewsFiltered(
         $database,
         $search,
         $sort,
@@ -27,10 +22,10 @@ try {
 
     $title = 'Reviews List';
     ob_start();
-    include 'templates/review.html.php';
+    include 'templates/user_review.html.php';
     $output = ob_get_clean();
 } catch (PDOException $e) {
     $title = 'Error';
     $output = $e->getMessage();
 }
-include 'templates/layout.html.php';
+include 'templates/user_layout.html.php';

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="../admin_style.css">
-    <title><?= $title ?></title>
+    <title><?= htmlspecialchars($title, ENT_QUOTES, 'UTF-8') ?></title>
 </head>
 
 <body>
@@ -13,7 +13,7 @@
     </form>
 
     <header>
-        <h1>🎫Administrator🍿</h1>
+        <h1>🎫Administrator Dashboard🍿</h1>
     </header>
     <nav>
         <ul>
@@ -21,6 +21,7 @@
             <li><a href="reviewers.php">Reviewers List</a></li>
             <li><a href="films.php">Films List</a></li>
             <li><a href="mailbox_admin.php">Mail Box</a></li>
+            <li><a href="profile.php">Admin Profile</a></li>
         </ul>
     </nav>
     <main>

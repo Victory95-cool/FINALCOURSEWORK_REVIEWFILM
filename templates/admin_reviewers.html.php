@@ -1,9 +1,15 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-<link rel="stylesheet" href="admin_style.css">
 
 <h2>Reviewers List</h2>
 
-<p>Total Reviewers: <?= $totalReviewers ?></p>
+<?php if ($adminNotice !== ''): ?>
+    <p class="admin-notice"><?= htmlspecialchars($adminNotice, ENT_QUOTES, 'UTF-8') ?></p>
+<?php endif; ?>
+
+<div class="reviewer-stats">
+    <p>Total Reviewers: <?= (int) $totalReviewers ?></p>
+    <p>Banned Users: <?= (int) $totalBannedReviewers ?></p>
+</div>
 
 <div style="margin-top: 20px;">
     <a href="addreviewers.php" class="btn-add" style="text-decoration: none; display: inline-block;">
@@ -58,13 +64,20 @@
             <th>Username</th>
             <th>Phone Number</th>
             <th>Email</th>
+            <th>Status</th>
+            <th>Created At</th>
             <th>Action</th>
         </tr>
     </thead>
     <tbody>
         <?php foreach ($reviewers as $reviewer): ?>
             <tr>
-                <td><?= htmlspecialchars($reviewer['username'], ENT_QUOTES, 'UTF-8') ?></td>
+                <td>
+                    <?= htmlspecialchars($reviewer['username'], ENT_QUOTES, 'UTF-8') ?>
+                    <?php if (!empty($reviewer['is_banned'])): ?>
+                        <span class="banned-user-label">Banned</span>
+                    <?php endif; ?>
+                </td>
 
                 <td>
                     <?php if (!empty($reviewer['phone_number'])): ?>
@@ -84,6 +97,8 @@
                     <?php endif; ?>
                 </td>
 
+                <td><?= !empty($reviewer['is_banned']) ? 'Banned' : 'Active' ?></td>
+                <td><?= !empty($reviewer['created_at']) ? date('Y-m-d H:i:s', strtotime($reviewer['created_at'])) : 'N/A' ?></td>
                 <td>
                     <div style="display: flex; gap: 10px;">
                         <a href="editreviewers.php?id=<?= $reviewer['id'] ?>" class="btn-edit">Edit</a>
@@ -92,6 +107,17 @@
                             <input type="hidden" name="id" value="<?= $reviewer['id'] ?>">
                             <input type="hidden" name="type" value="reviewers"> <input type="submit" value="Delete" class="btn-delete">
                         </form>
+
+                        <?php if (!empty($reviewer['is_banned'])): ?>
+                            <form action="ban_reviewer.php" method="post" onsubmit="return confirm('Unban this reviewer?');">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['admin_csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                                <input type="hidden" name="id" value="<?= (int) $reviewer['id'] ?>">
+                                <input type="hidden" name="action" value="unban">
+                                <button type="submit" class="btn-unban">Unban</button>
+                            </form>
+                        <?php else: ?>
+                            <button type="button" class="btn-ban" data-reviewer-id="<?= (int) $reviewer['id'] ?>" data-reviewer-name="<?= htmlspecialchars($reviewer['username'], ENT_QUOTES, 'UTF-8') ?>">Ban</button>
+                        <?php endif; ?>
                     </div>
                 </td>
             </tr>
@@ -99,6 +125,22 @@
     </tbody>
 </table>
 <?php include __DIR__ . '/pagination.html.php'; ?>
+
+<div id="banModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="banModalTitle">
+    <div class="modal-content">
+        <button type="button" id="closeBanModal" class="close-btn" aria-label="Close">&times;</button>
+        <h3 id="banModalTitle" style="color: var(--accent); margin-bottom: 12px;">Ban Reviewer</h3>
+        <p id="banReviewerName"></p>
+        <form action="ban_reviewer.php" method="post">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['admin_csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+            <input type="hidden" name="action" value="ban">
+            <input type="hidden" name="id" id="banReviewerId">
+            <label for="banMessage">Message to the reviewer</label>
+            <textarea name="message" id="banMessage" maxlength="1000" required></textarea>
+            <button type="submit" class="btn-ban-submit">Ban User</button>
+        </form>
+    </div>
+</div>
 
 <script>
     const modal = document.getElementById("filterModal");
@@ -116,4 +158,20 @@
             modal.style.display = "none";
         }
     }
+
+    const banModal = document.getElementById("banModal");
+    const closeBanModal = document.getElementById("closeBanModal");
+    document.querySelectorAll(".btn-ban").forEach((button) => {
+        button.addEventListener("click", () => {
+            document.getElementById("banReviewerId").value = button.dataset.reviewerId;
+            document.getElementById("banReviewerName").textContent = "Ban " + button.dataset.reviewerName + "?";
+            document.getElementById("banMessage").value = "";
+            banModal.style.display = "flex";
+            document.getElementById("banMessage").focus();
+        });
+    });
+    closeBanModal.onclick = () => { banModal.style.display = "none"; };
+    window.addEventListener("click", (event) => {
+        if (event.target === banModal) banModal.style.display = "none";
+    });
 </script>

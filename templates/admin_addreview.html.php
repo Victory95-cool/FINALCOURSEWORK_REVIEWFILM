@@ -1,5 +1,6 @@
 <main>
     <form action="addreview.php" method="post">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf->token(), ENT_QUOTES, 'UTF-8') ?>">
         <h2>Add New Review</h2>
         <label for="reviewers_name">Reviewer</label>
         <input type="text" id="reviewers_name" name="reviewers_name" required>

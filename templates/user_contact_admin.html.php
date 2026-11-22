@@ -2,6 +2,7 @@
 
 <div class="form-wrapper">
     <form action="contact_admin.php" method="post">
+        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf->token(), ENT_QUOTES, 'UTF-8') ?>">
 
         <p style="color: var(--text-secondary); margin-bottom: 20px;">
             You are contacting Admin as: <strong><?= htmlspecialchars($_SESSION['user_name']) ?></strong>

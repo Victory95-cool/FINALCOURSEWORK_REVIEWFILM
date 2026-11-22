@@ -84,7 +84,7 @@
 
                 <td>
                     <?php
-                    if ($isAdmin || ($currentUser && $currentUser === $review['username'])):
+                    if ($isAdmin || ($currentReviewerId && (int) $currentReviewerId === (int) $review['reviewers_id'])):
                     ?>
                         <form action="editreview.php" method="get" style="display:inline-block">
                             <input type="hidden" name="id" value="<?= $review['id'] ?>">
@@ -104,7 +104,7 @@
         <?php endforeach; ?>
 
     </table>
-    <?php include __DIR__ . '/pagination.html.php'; ?>
+    <?php include __DIR__ . '/user_pagination.html.php'; ?>
 <?php endif; ?>
 
 <script>

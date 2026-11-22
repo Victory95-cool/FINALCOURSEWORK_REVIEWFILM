@@ -4,25 +4,26 @@ try {
     require_once __DIR__ . '/../includes/bootstrap.php';
     $database = Database::getConnection();
 
+    $csrf->assertValid($_POST['csrf_token'] ?? null);
     $id = $_POST['id'] ?? null;
     $type = $_POST['type'] ?? '';
 
     if ($id) {
         switch ($type) {
             case 'review':
-                Review::deleteReview($database, $id);
+                $reviewModel->deleteReview($database, $id);
                 $redirect = 'admin_review.php';
                 break;
             case 'film':
-                Film::deleteFilm($database, $id);
+                $filmModel->deleteFilm($database, $id);
                 $redirect = 'films.php';
                 break;
             case 'reviewers':
-                Reviewer::deleteReviewers($database, $id);
+                $reviewerModel->deleteReviewers($database, $id);
                 $redirect = 'reviewers.php';
                 break;
             case 'conversation':
-                Conversation::deleteConversation($database, $id);
+                $conversationModel->deleteConversation($database, $id);
                 $redirect = 'mailbox_admin.php';
                 break;
             default:

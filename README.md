@@ -40,8 +40,6 @@ The project is built with plain PHP, MySQL/MariaDB, HTML, CSS, and JavaScript, a
 - Duplicate validation covers film title and release year, reviewer name/email/phone, and poster content.
 - Pages and update operations are restricted according to session and role.
 
-[![Architecture diagram of victory95-cool/finalcoursework_reviewfilm](https://gitdiagram.com/victory95-cool/finalcoursework_reviewfilm/diagram.png)](https://gitdiagram.com/victory95-cool/finalcoursework_reviewfilm?utm_source=readme&utm_medium=picture)
-
 ## Technology
 
 | Component | Technology |
@@ -169,6 +167,8 @@ Films/
 ├── finalcoursework.sql             # Database schema and seed data
 └── README.md                       # Project documentation
 ```
+## Component/Architecture
+[![Architecture diagram of victory95-cool/finalcoursework_reviewfilm](https://gitdiagram.com/victory95-cool/finalcoursework_reviewfilm/diagram.png)](https://gitdiagram.com/victory95-cool/finalcoursework_reviewfilm?utm_source=readme&utm_medium=picture)
 
 ## XAMPP installation
 

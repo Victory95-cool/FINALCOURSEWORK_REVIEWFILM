@@ -1,4 +1,4 @@
-# Film Review Management System
+# Film Review Management System ver2
 
 A web application for managing films and film reviews with two roles:
 
@@ -167,6 +167,8 @@ Films/
 ├── finalcoursework.sql             # Database schema and seed data
 └── README.md                       # Project documentation
 ```
+## Component/Architecture
+[![Architecture diagram of victory95-cool/finalcoursework_reviewfilm](https://gitdiagram.com/victory95-cool/finalcoursework_reviewfilm/diagram.png)](https://gitdiagram.com/victory95-cool/finalcoursework_reviewfilm?utm_source=readme&utm_medium=picture)
 
 ## XAMPP installation
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 22, 2026 at 06:48 PM
+-- Generation Time: Nov 26, 2026 at 09:13 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -297,6 +297,28 @@ INSERT INTO `mails_box` (`id`, `conversation_id`, `sender`, `reviewers_id`, `sub
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `password_reset`
+--
+
+CREATE TABLE `password_reset` (
+  `id` int(11) NOT NULL,
+  `reviewer_id` int(11) NOT NULL,
+  `token_hash` char(64) NOT NULL,
+  `expires_at` datetime NOT NULL,
+  `used_at` datetime DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `password_reset`
+--
+
+INSERT INTO `password_reset` (`id`, `reviewer_id`, `token_hash`, `expires_at`, `used_at`, `created_at`) VALUES
+(22, 27, '131891449f33b8f8dbe07f2c0bea286db98b80a550d8b41bfc88a3346e3a9a45', '2026-11-18 13:00:07', NULL, '2026-11-18 12:00:07');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `review`
 --
 
@@ -338,9 +360,7 @@ INSERT INTO `review` (`id`, `review_text`, `rating`, `review_date`, `reviewers_i
 (42, 'Amazing', 5, '2026-11-10 14:29:03', 27, 26, NULL),
 (46, 'All Kneel to DOOOMMMM!!!', 5, '2026-11-05 01:23:07', 27, 34, NULL),
 (47, 'Terrified as DOOM', 5, '2026-11-16 16:13:50', 63, 34, NULL),
-(49, 'great', 5, '2026-11-23 00:18:36', 27, 13, NULL),
-(50, 'Haha', 1, '2026-11-23 00:19:12', 27, 25, 'images/review-images/a3a908af5dc1a00427deed94b99f9910.jpg'),
-(51, 'haha', 1, '2026-11-23 00:19:38', 27, 25, NULL);
+(49, 'great', 5, '2026-11-23 00:18:36', 27, 13, NULL);
 
 -- --------------------------------------------------------
 
@@ -376,7 +396,6 @@ INSERT INTO `reviewers` (`id`, `username`, `phone_number`, `email`, `created_at`
 (15, 'Jason Todd', '0834567812', 'jason@gmail.com', '2026-04-05 01:55:28', NULL, 0, NULL, NULL, NULL),
 (21, 'Bao Willy', '1234567890', 'willy@gmail.com', '2026-04-07 17:28:00', NULL, 0, NULL, NULL, NULL),
 (27, 'Dave Tran', '0337127828', 'dave@gmail.com', '2026-04-11 23:51:59', '$2y$10$gWlGL4BsjIm3/Snka6WUpOXNf.9ty7DANAw.Dt2QoR1NRvdJ3SHrO', 0, NULL, NULL, 'images/avatars/f709c8faacdb14506bc24aff27adf02b.jpg'),
-(30, 'Sammy Dutch', '0998123531', 'sammy@gmail.com', '2026-04-15 16:23:52', NULL, 0, NULL, NULL, NULL),
 (36, 'Victor', '0965905941', 'victor@gmail.com', '2026-04-16 21:53:03', NULL, 0, NULL, NULL, NULL),
 (38, 'Hoàng samson', '1111111111', 'samson@gmail.com', '2026-04-24 10:50:02', NULL, 0, NULL, NULL, NULL),
 (39, 'Tommy', '1234567890', 'tommy@gmail.com', '2026-10-28 10:56:24', NULL, 0, NULL, NULL, NULL),
@@ -479,6 +498,27 @@ INSERT INTO `stars` (`id`, `name`) VALUES
 (55, 'Zazie Beetz'),
 (6, 'Zoe Saldana');
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `watchlist`
+--
+
+CREATE TABLE `watchlist` (
+  `reviewer_id` int(11) NOT NULL,
+  `film_id` int(11) NOT NULL,
+  `added_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `watchlist`
+--
+
+INSERT INTO `watchlist` (`reviewer_id`, `film_id`, `added_at`) VALUES
+(27, 27, '2026-11-18 03:17:48'),
+(27, 30, '2026-11-11 05:10:06'),
+(63, 30, '2026-11-16 08:40:20');
+
 --
 -- Indexes for dumped tables
 --
@@ -534,6 +574,14 @@ ALTER TABLE `mails_box`
   ADD KEY `reviewers_id` (`reviewers_id`);
 
 --
+-- Indexes for table `password_reset`
+--
+ALTER TABLE `password_reset`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_password_reset_token_hash` (`token_hash`),
+  ADD KEY `idx_password_reset_reviewer` (`reviewer_id`);
+
+--
 -- Indexes for table `review`
 --
 ALTER TABLE `review`
@@ -556,6 +604,13 @@ ALTER TABLE `reviewers`
 ALTER TABLE `stars`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `watchlist`
+--
+ALTER TABLE `watchlist`
+  ADD PRIMARY KEY (`reviewer_id`,`film_id`),
+  ADD KEY `idx_watchlist_film` (`film_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -596,6 +651,12 @@ ALTER TABLE `genre`
 --
 ALTER TABLE `mails_box`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+
+--
+-- AUTO_INCREMENT for table `password_reset`
+--
+ALTER TABLE `password_reset`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `review`
@@ -641,11 +702,24 @@ ALTER TABLE `mails_box`
   ADD CONSTRAINT `mails_box_ibfk_2` FOREIGN KEY (`reviewers_id`) REFERENCES `reviewers` (`id`);
 
 --
+-- Constraints for table `password_reset`
+--
+ALTER TABLE `password_reset`
+  ADD CONSTRAINT `fk_password_reset_reviewer` FOREIGN KEY (`reviewer_id`) REFERENCES `reviewers` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `review`
 --
 ALTER TABLE `review`
   ADD CONSTRAINT `fk_review_film` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `fk_review_reviewers` FOREIGN KEY (`reviewers_id`) REFERENCES `reviewers` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `watchlist`
+--
+ALTER TABLE `watchlist`
+  ADD CONSTRAINT `fk_watchlist_film` FOREIGN KEY (`film_id`) REFERENCES `film` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_watchlist_reviewer` FOREIGN KEY (`reviewer_id`) REFERENCES `reviewers` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -104,6 +104,7 @@
                         <a href="editreviewers.php?id=<?= $reviewer['id'] ?>" class="btn-edit">Edit</a>
 
                         <form action="delete.php" method="post" onsubmit="return confirm('Are you sure you want to delete this reviewer?');">
+                            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf->token(), ENT_QUOTES, 'UTF-8') ?>">
                             <input type="hidden" name="id" value="<?= $reviewer['id'] ?>">
                             <input type="hidden" name="type" value="reviewers"> <input type="submit" value="Delete" class="btn-delete">
                         </form>
